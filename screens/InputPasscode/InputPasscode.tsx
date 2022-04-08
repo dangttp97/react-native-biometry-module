@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import * as Keychain from "react-native-keychain";
 import { Passcode, PasscodeProps } from "../";
-import { Icons } from "@assets";
+import { Icons } from "../../assets";
 
 export interface InputPasscodeProps
   extends Omit<
