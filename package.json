@@ -1,13 +1,19 @@
 {
   "name": "biometry-module",
   "version": "1.0.0",
-  "main": "index.tsx",
-  "repository": "git@github.com:dangttp97/react-native-biometry-module.git",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dangttp97/react-native-biometry-module.git"
+  },
   "author": "Tran Thanh Phuong Dang",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "compile": "npm run build",
+    "dev": "yarn build -watch"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.17.3",
