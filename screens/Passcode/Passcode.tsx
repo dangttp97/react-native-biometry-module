@@ -14,9 +14,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
-import { colors, delay, grid, PasscodeType } from '@commons'
+import { colors, delay, grid, PasscodeType } from '../../commons'
 import * as ReactNativeHapticFeedback from 'react-native-haptic-feedback'
-import { Icons } from '@assets'
+import { Icons } from '../../assets'
 import * as _ from 'lodash'
 import { Col, Grid, Row } from 'react-native-easy-grid'
 

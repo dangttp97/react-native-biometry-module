@@ -1,10 +1,10 @@
-import { PasscodeProps, Passcode } from '@screens'
+import { PasscodeProps, Passcode } from '../../screens'
 import {
   delay,
   NoBiometryAuthConfig,
   PasscodeType,
   WithBiometryAuthConfig,
-} from '@commons'
+} from '../../commons'
 import React, { PureComponent } from 'react'
 import { StyleProp, ViewProps } from 'react-native'
 import * as Keychain from 'react-native-keychain'

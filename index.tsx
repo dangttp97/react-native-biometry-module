@@ -1,12 +1,12 @@
 import React, { PureComponent } from "react";
-import { InputPasscode, Locked, SelectPasscode } from "@screens";
+import { InputPasscode, Locked, SelectPasscode } from "./screens";
 import {
   deletePinCode,
   hasPinCode,
   PasscodeResultStatus,
   PasscodeType,
   resetInternalStates,
-} from "@commons";
+} from "./commons";
 import { StyleProp, ViewStyle } from "react-native";
 
 export interface BiometryProps {
