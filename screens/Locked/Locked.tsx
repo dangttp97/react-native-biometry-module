@@ -9,23 +9,25 @@ import { animated, Controller } from "@react-spring/native";
 export interface LockedProps {
   timeToLock: number;
   title?: string;
+  subtitle?: string;
   description?: string;
-  subDescription?: string;
+  buttonTitle?: string;
+  timePasscodeLockedAsyncStorageName: string;
+  passcodeAttemptsAsyncStorageName: string;
+
   titleComponent?: ReactNode;
   timerComponent?: (minutes: number, seconds: number) => ReactNode;
   iconComponent?: ReactNode;
   lockedIconComponent?: ReactNode;
-  buttonTitle?: string;
   buttonComponent?: ReactNode;
-  onButtonClick?: () => void;
-  timePinLockedAsyncStorageName: string;
-  pinAttemptsAsyncStorageName: string;
+
   changeStatus: (status: PasscodeResultStatus) => void;
+
   styleContainer?: StyleProp<ViewStyle>;
   styleIconContainer?: StyleProp<ViewStyle>;
   styleTitle?: StyleProp<TextStyle>;
+  styleSubtitle?: StyleProp<TextStyle>;
   styleDescription?: StyleProp<TextStyle>;
-  styleSubDescription?: StyleProp<TextStyle>;
   styleTimerText?: StyleProp<TextStyle>;
   styleTextContainer?: StyleProp<ViewStyle>;
   styleTimerContainer?: StyleProp<ViewStyle>;
@@ -38,7 +40,10 @@ interface LockedState {
 const AnimatedView = animated(View);
 
 export class Locked extends PureComponent<LockedProps, LockedState> {
-  static defaultProps: Partial<LockedProps> = {};
+  static defaultProps: Partial<LockedProps> = {
+    timeToLock: 300000,
+  };
+
   animations = new Controller({
     from: {
       opacity: 0,
@@ -67,29 +72,29 @@ export class Locked extends PureComponent<LockedProps, LockedState> {
   }
 
   componentDidMount() {
-    AsyncStorage.getItem(this.props.timePinLockedAsyncStorageName).then(
+    AsyncStorage.getItem(this.props.timePasscodeLockedAsyncStorageName).then(
       (value) => {
-        if (value) {
-          this.timeLocked =
-            new Date(Number(value)).getTime() + this.props.timeToLock;
+        if (value !== null) {
+          this.timeLocked = new Date(value).getTime() + this.props.timeToLock;
         } else {
           this.timeLocked = new Date().getTime() + this.props.timeToLock;
         }
-
         this.timer();
       }
     );
   }
 
   async timer() {
-    const timeDiff = +new Date(this.timeLocked) - +new Date();
+    const timeLockedTimestamp = new Date(this.timeLocked).getTime();
+    const currentTimestamp = new Date().getTime();
+    const timeDiff = timeLockedTimestamp - currentTimestamp;
     this.setState({ timeDifferent: Math.max(0, timeDiff) });
     await delay(1000);
     if (timeDiff < 1000) {
       this.props.changeStatus(PasscodeResultStatus.initial);
       AsyncStorage.multiRemove([
-        this.props.timePinLockedAsyncStorageName,
-        this.props.pinAttemptsAsyncStorageName,
+        this.props.timePasscodeLockedAsyncStorageName,
+        this.props.passcodeAttemptsAsyncStorageName,
       ]);
     }
     if (!this.isUnmounted) {
@@ -148,9 +153,9 @@ export class Locked extends PureComponent<LockedProps, LockedState> {
           {this.props.iconComponent
             ? this.props.iconComponent
             : this.renderIcon()}
-          <Text style={[styles.description, this.props.styleDescription]}>
-            {this.props.description
-              ? this.props.description
+          <Text style={[styles.description, this.props.styleSubtitle]}>
+            {this.props.subtitle
+              ? this.props.subtitle
               : `To protect your information, access has been locked for ${Math.ceil(
                   this.props.timeToLock / 60000
                 )} minutes. Come back later and try again.`}

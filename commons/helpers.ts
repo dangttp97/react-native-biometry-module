@@ -14,9 +14,7 @@ export const WithBiometryAuthConfig = Platform.select({
   android: {
     accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
   },
-  ios: {
-    accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-  },
+  ios: { accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY },
 })
 
 export const hasPinCode = async (serviceName: string) => {

@@ -1,28 +1,39 @@
-import { PasscodeProps, Passcode } from '../../screens'
+import React, { PureComponent } from "react";
+
 import {
   delay,
   NoBiometryAuthConfig,
   PasscodeType,
   WithBiometryAuthConfig,
-} from '../../commons'
-import React, { PureComponent } from 'react'
-import { StyleProp, ViewProps } from 'react-native'
-import * as Keychain from 'react-native-keychain'
+} from "../../commons";
+import { PasscodeProps, Passcode } from "../";
+import * as Keychain from "react-native-keychain";
 
-export interface SelectPasscodeProps extends Omit<PasscodeProps, 'endProcess'> {
-  passcodeKeychainName: string
+export interface SelectPasscodeProps
+  extends Omit<
+    PasscodeProps,
+    "endProcess" | "title" | "subTitle" | "subTitleFail" | "titleFail"
+  > {
+  selectTitle?: string;
+  selectSubtitle?: string;
+  selectErrorTitle?: string;
+  selectErrorSubtitle?: string;
 
-  onCancel?: () => void
-  storedPasscode?: (passcode: string) => void
-  onSuccess?: (passcode: string) => void
+  confirmTitle?: string;
+  confirmSubtitle?: string;
+  confirmErrorTitle?: string;
+  confirmErrorSubtitle?: string;
 
-  styleContainer?: StyleProp<ViewProps>
+  passcodeKeychainName: string;
+  biometryEnabled: boolean;
+
+  onCancel?: () => void;
+  onSuccess?: (passcode: string) => void;
 }
 
 interface SelectPasscodeState {
-  type: PasscodeType
-  passcode: string
-  errorShown: boolean
+  type: PasscodeType;
+  passcode: string;
 }
 
 export class SelectPasscode extends PureComponent<
@@ -31,52 +42,57 @@ export class SelectPasscode extends PureComponent<
 > {
   static defaultProps: Partial<SelectPasscodeProps> = {
     styleContainer: undefined,
-  }
+  };
 
   constructor(props: SelectPasscodeProps) {
-    super(props)
-    this.state = { type: PasscodeType.select, passcode: '', errorShown: false }
-    this.endProcessConfirmPasscode = this.endProcessConfirmPasscode.bind(this)
-    this.endProcessSelectPasscode = this.endProcessSelectPasscode.bind(this)
+    super(props);
+    this.state = { type: PasscodeType.select, passcode: "" };
+    this.endProcessConfirmPasscode = this.endProcessConfirmPasscode.bind(this);
+    this.endProcessSelectPasscode = this.endProcessSelectPasscode.bind(this);
   }
 
   endProcessSelectPasscode(passcode: string, isErrorValidation?: boolean) {
     this.setState({
-      passcode: isErrorValidation ? '' : passcode,
+      passcode: isErrorValidation ? "" : passcode,
       type: isErrorValidation ? PasscodeType.select : PasscodeType.confirm,
-    })
+    });
   }
 
   async endProcessConfirmPasscode(passcode: string) {
     if (this.state.passcode === passcode) {
-      if (this.props.storedPasscode) {
-        this.props.storedPasscode(passcode)
-      } else {
-        console.log('Save passcode')
-        const biometrySupported =
-          (await Keychain.getSupportedBiometryType()) !== null
+      console.log("Save passcode");
+      const biometrySupported =
+        (await Keychain.getSupportedBiometryType()) !== null;
+
+      if (biometrySupported && this.props.biometryEnabled) {
         await Keychain.setInternetCredentials(
-          this.props.passcodeKeychainName,
-          this.props.passcodeKeychainName,
+          this.props.passcodeKeychainName + "Biometry",
+          this.props.passcodeKeychainName + "Biometry",
           passcode,
-          biometrySupported ? WithBiometryAuthConfig : NoBiometryAuthConfig,
-        )
+          WithBiometryAuthConfig
+        );
       }
+      await delay(500);
+      await Keychain.setInternetCredentials(
+        this.props.passcodeKeychainName,
+        this.props.passcodeKeychainName,
+        passcode,
+        NoBiometryAuthConfig
+      );
+
       if (this.props.onSuccess) {
-        this.props.onSuccess(passcode)
+        this.props.onSuccess(passcode);
       }
     } else {
-      this.setState({ type: PasscodeType.confirm, errorShown: true })
-      await delay(2000)
-      this.setState({ errorShown: false })
+      this.setState({ type: PasscodeType.confirm });
     }
   }
 
   cancelConfirm() {
     if (this.props.onCancel) {
-      this.props.onCancel()
+      this.props.onCancel();
     }
-    this.setState({ type: PasscodeType.select })
+    this.setState({ type: PasscodeType.select });
   }
 
   render() {
@@ -87,9 +103,12 @@ export class SelectPasscode extends PureComponent<
             {...this.props}
             endProcess={this.endProcessSelectPasscode}
             type={PasscodeType.select}
-            title={this.props.title ?? '1 - Enter a PIN Code'}
-            subTitle={this.props.subTitle ?? 'To keep your information secure'}
-            subTitleFail={this.props.subTitleFail ?? ''}
+            title={this.props.selectTitle ?? "1 - Enter a PIN Code"}
+            subTitle={
+              this.props.selectSubtitle ?? "To keep your information secure"
+            }
+            titleFail={this.props.selectErrorTitle}
+            subTitleFail={this.props.selectErrorSubtitle}
           />
         )}
         {this.state.type === PasscodeType.confirm && (
@@ -97,15 +116,17 @@ export class SelectPasscode extends PureComponent<
             {...this.props}
             type={PasscodeType.confirm}
             onCancel={this.cancelConfirm}
+            previousPasscode={this.state.passcode}
             endProcess={this.endProcessConfirmPasscode}
-            errorShown={this.state.errorShown}
-            title={this.props.title ?? '2 - Confirm your PIN Code'}
-            subTitle={this.props.subTitle ?? ''}
-            subTitleFail={this.props.subTitleFail ?? 'Please try again'}
-            titleFail={this.props.titleFail ?? 'Your entries did not match'}
+            title={this.props.confirmTitle ?? "2 - Confirm your PIN Code"}
+            subTitle={this.props.confirmSubtitle ?? ""}
+            subTitleFail={this.props.confirmErrorSubtitle ?? "Please try again"}
+            titleFail={
+              this.props.confirmErrorTitle ?? "Your entries did not match"
+            }
           />
         )}
       </>
-    )
+    );
   }
 }

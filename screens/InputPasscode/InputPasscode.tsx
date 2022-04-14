@@ -1,4 +1,6 @@
 import React, { PureComponent } from "react";
+
+import { Icons } from "../../assets";
 import {
   colors,
   delay,
@@ -8,6 +10,7 @@ import {
   WithBiometryAuthConfig,
 } from "../../commons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Passcode, PasscodeProps } from "../";
 import {
   Image,
   StyleProp,
@@ -15,8 +18,6 @@ import {
   ViewStyle,
 } from "react-native";
 import * as Keychain from "react-native-keychain";
-import { Passcode, PasscodeProps } from "../";
-import { Icons } from "../../assets";
 
 export interface InputPasscodeProps
   extends Omit<
@@ -24,18 +25,16 @@ export interface InputPasscodeProps
     "previousPasscode" | "keypadType" | "status" | "endProcess"
   > {
   maxAttempts: number;
-  storedPasscode: string;
   passcodeAttemptsAsyncStorageName: string;
   timePasscodeLockedAsyncStorageName: string;
   passcodeKeychainName: string;
   passcodeFallback?: boolean;
-  biometricDisabled: boolean;
+  biometryEnabled: boolean;
   lockScreenDisabled: boolean;
   passcodeStatusExternal: PasscodeResultStatus;
 
-  handleResult: (passcode?: string) => void;
+  passcodeValidOverride?: (passcode?: string) => void;
   callbackErrorBiometric?: (err: any) => void;
-  changeInternalStatus: (status: PasscodeResultStatus) => void;
   onSuccess?: (passcode: string) => void;
   onFailed?: (attempts: number) => void;
 
@@ -43,6 +42,7 @@ export interface InputPasscodeProps
 }
 
 export interface InputPasscodeState {
+  storedPasscode?: string;
   passcodeStatus: PasscodeResultStatus;
   locked: boolean;
   biometryType: "faceRecognition" | "fingerprint" | undefined;
@@ -52,8 +52,6 @@ export class InputPasscode extends PureComponent<
   InputPasscodeProps,
   InputPasscodeState
 > {
-  keychainResult: string | undefined = undefined;
-
   static defaultProps: Partial<InputPasscodeProps> = {
     passcodeFallback: true,
     styleContainer: null,
@@ -62,6 +60,7 @@ export class InputPasscode extends PureComponent<
   constructor(props: InputPasscodeProps) {
     super(props);
     this.state = {
+      storedPasscode: undefined,
       passcodeStatus: PasscodeResultStatus.initial,
       locked: false,
       biometryType: undefined,
@@ -69,16 +68,6 @@ export class InputPasscode extends PureComponent<
     this.endProcess = this.endProcess.bind(this);
     this.launchBiometric = this.launchBiometric.bind(this);
 
-    Keychain.getInternetCredentials(this.props.passcodeKeychainName)
-      .then((result) => {
-        this.keychainResult = (result && result.password) || undefined;
-      })
-      .catch((error) => {
-        console.log("PinCodeEnter: ", error);
-      });
-  }
-
-  componentDidMount() {
     Keychain.getSupportedBiometryType().then((type) => {
       switch (type) {
         case Keychain.BIOMETRY_TYPE.FACE:
@@ -98,6 +87,17 @@ export class InputPasscode extends PureComponent<
     });
   }
 
+  componentDidMount() {
+    Keychain.getInternetCredentials(
+      this.props.passcodeKeychainName,
+      NoBiometryAuthConfig
+    ).then((value) => {
+      this.setState({
+        storedPasscode: (value && value.password) || undefined,
+      });
+    });
+  }
+
   componentDidUpdate(prevProps: Readonly<InputPasscodeProps>) {
     if (
       prevProps.passcodeStatusExternal !== this.props.passcodeStatusExternal
@@ -108,89 +108,82 @@ export class InputPasscode extends PureComponent<
 
   componentWillUnmount() {
     this.setState({
+      storedPasscode: undefined,
       passcodeStatus: PasscodeResultStatus.initial,
       locked: false,
       biometryType: undefined,
     });
   }
 
-  async endProcess(pinCode?: string) {
-    if (this.props.onSuccess) {
-      this.props.onSuccess(pinCode as string);
-    } else {
-      let passcodeValidOverride: any;
-      if (this.props.handleResult) {
-        passcodeValidOverride = await Promise.resolve(
-          this.props.handleResult(pinCode)
-        );
-      }
-      this.setState({ passcodeStatus: PasscodeResultStatus.initial });
-      this.props.changeInternalStatus(PasscodeResultStatus.initial);
+  async endProcess(passcode?: string) {
+    let passcodeValidOverride: any;
 
-      const passcodeAttemptsStr = await AsyncStorage.getItem(
-        this.props.passcodeAttemptsAsyncStorageName
+    if (this.props.passcodeValidOverride) {
+      passcodeValidOverride = await Promise.resolve(
+        this.props.passcodeValidOverride(passcode)
       );
-      let passcodeAttempts = passcodeAttemptsStr ? +passcodeAttemptsStr : 0;
-      const passcode = this.props.storedPasscode || this.keychainResult;
+    }
+
+    this.setState({
+      passcodeStatus: PasscodeResultStatus.initial,
+    });
+
+    const passcodeAttemptsStr = await AsyncStorage.getItem(
+      this.props.passcodeAttemptsAsyncStorageName
+    );
+    let passcodeAttempts = passcodeAttemptsStr ? +passcodeAttemptsStr : 0;
+    if (
+      passcodeValidOverride !== undefined
+        ? passcodeValidOverride
+        : this.state.storedPasscode === passcode
+    ) {
+      this.setState({
+        passcodeStatus: PasscodeResultStatus.success,
+      });
+      AsyncStorage.multiRemove([
+        this.props.passcodeAttemptsAsyncStorageName,
+        this.props.timePasscodeLockedAsyncStorageName,
+      ]);
+      if (this.props.onSuccess) {
+        this.props.onSuccess(this.state.storedPasscode as string);
+      }
+    } else {
+      passcodeAttempts++;
       if (
-        passcodeValidOverride !== undefined
-          ? passcodeValidOverride
-          : passcode === pinCode
+        +passcodeAttempts >= this.props.maxAttempts &&
+        !this.props.lockScreenDisabled
       ) {
-        this.setState({ passcodeStatus: PasscodeResultStatus.success });
-        AsyncStorage.multiRemove([
-          this.props.passcodeAttemptsAsyncStorageName,
+        await AsyncStorage.setItem(
           this.props.timePasscodeLockedAsyncStorageName,
-        ]);
-        this.props.changeInternalStatus(PasscodeResultStatus.success);
-        if (this.props.onSuccess) {
-          this.props.onSuccess(passcode as string);
-        }
+          new Date().toISOString()
+        );
+        this.setState({
+          locked: true,
+          passcodeStatus: PasscodeResultStatus.locked,
+        });
       } else {
-        passcodeAttempts++;
-        if (
-          +passcodeAttempts >= this.props.maxAttempts &&
-          !this.props.lockScreenDisabled
-        ) {
-          await AsyncStorage.setItem(
-            this.props.timePasscodeLockedAsyncStorageName,
-            new Date().toISOString()
-          );
-          this.setState({
-            locked: true,
-            passcodeStatus: PasscodeResultStatus.locked,
-          });
-          this.props.changeInternalStatus(PasscodeResultStatus.locked);
-        } else {
-          await AsyncStorage.setItem(
-            this.props.passcodeAttemptsAsyncStorageName,
-            passcodeAttempts.toString()
-          );
-          this.setState({ passcodeStatus: PasscodeResultStatus.failure });
-          this.props.changeInternalStatus(PasscodeResultStatus.failure);
-        }
-        if (this.props.onFailed) {
-          await delay(1500);
-          this.props.onFailed(passcodeAttempts);
-        }
+        await AsyncStorage.setItem(
+          this.props.passcodeAttemptsAsyncStorageName,
+          passcodeAttempts.toString()
+        );
+        this.setState({ passcodeStatus: PasscodeResultStatus.failure });
+      }
+      if (this.props.onFailed) {
+        await delay(1500);
+        this.props.onFailed(passcodeAttempts);
       }
     }
   }
 
   async launchBiometric() {
-    const options =
-      this.state.biometryType !== null
-        ? WithBiometryAuthConfig
-        : NoBiometryAuthConfig;
-
     const data = await Keychain.getInternetCredentials(
-      this.props.passcodeKeychainName,
-      options
+      this.props.passcodeKeychainName + "Biometry",
+      WithBiometryAuthConfig
     );
 
     try {
       if (typeof data !== "boolean") {
-        this.endProcess(this.props.storedPasscode || this.keychainResult);
+        this.endProcess(data.password);
       } else if (!data && this.props.callbackErrorBiometric) {
         this.props.callbackErrorBiometric(new Error("Authenticate failed"));
       }
@@ -207,7 +200,7 @@ export class InputPasscode extends PureComponent<
     if (this.props.bottomLeftButton) {
       return this.props.bottomLeftButton;
     }
-    if (this.props.biometricDisabled || this.state.biometryType === undefined) {
+    if (!this.props.biometryEnabled || this.state.biometryType === undefined) {
       return undefined;
     }
     return (
@@ -238,7 +231,7 @@ export class InputPasscode extends PureComponent<
   }
 
   render() {
-    const passcode = this.props.storedPasscode || this.keychainResult;
+    const passcode = this.state.storedPasscode;
 
     return (
       <>
@@ -249,7 +242,6 @@ export class InputPasscode extends PureComponent<
           subTitle={this.props.subTitle ?? ""}
           subTitleFail={this.props.subTitleFail ?? "Please try again"}
           type={PasscodeType.input}
-          status={this.state.passcodeStatus}
           previousPasscode={passcode}
           bottomLeftButton={this.renderBottomLeftButton()}
           endProcess={this.endProcess}
