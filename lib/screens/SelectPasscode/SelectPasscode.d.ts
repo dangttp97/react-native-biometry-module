@@ -1,18 +1,23 @@
-import { PasscodeProps } from '../../screens';
-import { PasscodeType } from '../../commons';
-import { PureComponent } from 'react';
-import { StyleProp, ViewProps } from 'react-native';
-export interface SelectPasscodeProps extends Omit<PasscodeProps, 'endProcess'> {
+import { PureComponent } from "react";
+import { PasscodeType } from "../../commons";
+import { PasscodeProps } from "../";
+export interface SelectPasscodeProps extends Omit<PasscodeProps, "endProcess" | "title" | "subTitle" | "subTitleFail" | "titleFail"> {
+    selectTitle?: string;
+    selectSubtitle?: string;
+    selectErrorTitle?: string;
+    selectErrorSubtitle?: string;
+    confirmTitle?: string;
+    confirmSubtitle?: string;
+    confirmErrorTitle?: string;
+    confirmErrorSubtitle?: string;
     passcodeKeychainName: string;
+    biometryEnabled: boolean;
     onCancel?: () => void;
-    storedPasscode?: (passcode: string) => void;
     onSuccess?: (passcode: string) => void;
-    styleContainer?: StyleProp<ViewProps>;
 }
 interface SelectPasscodeState {
     type: PasscodeType;
     passcode: string;
-    errorShown: boolean;
 }
 export declare class SelectPasscode extends PureComponent<SelectPasscodeProps, SelectPasscodeState> {
     static defaultProps: Partial<SelectPasscodeProps>;
