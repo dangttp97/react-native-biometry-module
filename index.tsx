@@ -4,15 +4,25 @@ import {
   deletePinCode,
   hasPinCode,
   PasscodeResultStatus,
-  PasscodeType,
   resetInternalStates,
 } from "./commons";
 import { InputPasscode, Locked, SelectPasscode } from "./screens";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+export enum ScreenType {
+  select = "select",
+  input = "input",
+}
+
+export enum PasscodeResult {
+  initial = "initial",
+  success = "success",
+  locked = "locked",
+}
+
 export interface BiometryProps {
-  type: PasscodeType;
+  type: ScreenType;
   numberOfAttempts?: number;
   lockedTime?: number;
   alphabetCharsVisible: boolean;
@@ -25,7 +35,7 @@ export interface BiometryProps {
   keypadCharHighlightedColor?: string;
   keypadCharNormalColor?: string;
 
-  passcodeStatus?: PasscodeResultStatus;
+  passcodeStatus?: PasscodeResult;
 
   deleteButtonIcon?: JSX.Element;
   biometryButtonIcon?: JSX.Element;
@@ -79,7 +89,7 @@ export interface BiometryProps {
 }
 
 export interface BiometryState {
-  internalPasscodeStatus: PasscodeResultStatus;
+  internalPasscodeStatus: PasscodeResult;
   passcodeLocked: boolean;
 }
 
@@ -88,10 +98,23 @@ const passcodeAttemptsAsyncStorageNameDefault = "PasscodeAttemptsDefault";
 const timePasscodeLockedAsyncStorageNameDefault = "TimePasscodeLockedDefault";
 
 /**
- * @param {PasscodeType} type {required} - Define type of screen
+ * @param {boolean} biometryEnabled - Specify using biometry or not
+ * @param {PasscodeType} type - Define type of screen
  * @param {number | undefined} numberOfAttempts - Specify max attempts of try before locked
  * @param {number | undefined} lockedTime - Specify lock time while running out attempts
  * @param {boolean | undefined} alphabetCharsVisible - Specify whether alphabets char display under numeric char
+ * @param {boolean | undefined} passcodeVisible = Is passcode visible when enter or not
+ * @param {string | undefined} timePasscodeLockedAsyncStorageName - AsyncStorage key name for time passcode locked
+ * @param {string | undefined} passcodeKeychainName - Keychain storage name for saving passcode
+ * @param {string | undefined} passcodeAttemptsAsyncStorageName - AsyncStorage key name for number of attempts
+ * @param {string | undefined} keypadCharHighlightedColor - Color of keypad when pressed
+ * @param {string | undefined} keypadCharNormalColor - Color of keypad when not pressed
+ * @param {PasscodeResult | undefined} passcodeStatus - Set current status of passcode
+ * @param {JSX.Element | undefined} deleteButtonIcon - Set delete icon for delete button
+ * @param {JSX.Element | undefined} biometryButtonIcon - Set icon for biometry button
+ * @param {JSX.Element | undefined} lockedButton - Set button element for locked page
+ * @param {JSX.Element | undefined} lockedPage - Locked page for replacement
+ * @param {JSX.Element | undefined} bottomLeftButton - Bottom left button in keypad
  */
 class Biometry extends PureComponent<BiometryProps, BiometryState> {
   static defaultProps: Partial<BiometryProps> = {
@@ -102,7 +125,7 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
   constructor(props: BiometryProps) {
     super(props);
     this.state = {
-      internalPasscodeStatus: PasscodeResultStatus.initial,
+      internalPasscodeStatus: PasscodeResult.initial,
       passcodeLocked: false,
     };
     this.changeInternalStatus = this.changeInternalStatus.bind(this);
@@ -115,15 +138,15 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
     ).then((value) => {
       if (value !== null) {
         this.setState({
-          internalPasscodeStatus: PasscodeResultStatus.locked,
+          internalPasscodeStatus: PasscodeResult.locked,
           passcodeLocked: true,
         });
       }
     });
   }
 
-  changeInternalStatus(status: PasscodeResultStatus) {
-    if (status === PasscodeResultStatus.initial) {
+  changeInternalStatus(status: PasscodeResult) {
+    if (status === PasscodeResult.initial) {
       this.setState({ passcodeLocked: false });
     }
 
@@ -148,7 +171,7 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
           switch (status) {
             case PasscodeResultStatus.initial:
               this.setState({
-                internalPasscodeStatus: status,
+                internalPasscodeStatus: PasscodeResult.initial,
                 passcodeLocked: false,
               });
           }
@@ -169,9 +192,9 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
 
     return (
       <>
-        {type === PasscodeType.select &&
+        {type === ScreenType.select &&
           !this.state.passcodeLocked &&
-          this.state.internalPasscodeStatus !== PasscodeResultStatus.locked && (
+          this.state.internalPasscodeStatus !== PasscodeResult.locked && (
             <SelectPasscode
               selectTitle={this.props.passcodeSelectTitle}
               selectSubtitle={this.props.passcodeSelectSubtitle}
@@ -208,9 +231,9 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
               }
             />
           )}
-        {type === PasscodeType.input &&
+        {type === ScreenType.input &&
           !this.state.passcodeLocked &&
-          this.state.internalPasscodeStatus !== PasscodeResultStatus.locked && (
+          this.state.internalPasscodeStatus !== PasscodeResult.locked && (
             <InputPasscode
               title={this.props.passcodeInputTitle}
               subTitle={this.props.passcodeInputSubtitle}
@@ -264,8 +287,8 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
               }
             />
           )}
-        {(passcodeStatus === PasscodeResultStatus.locked ||
-          this.state.internalPasscodeStatus === PasscodeResultStatus.locked ||
+        {(passcodeStatus === PasscodeResult.locked ||
+          this.state.internalPasscodeStatus === PasscodeResult.locked ||
           this.state.passcodeLocked) &&
           (this.props.lockedPage
             ? this.props.lockedPage
@@ -294,8 +317,6 @@ const resetPasscodeInternalStates = (
 };
 
 export {
-  PasscodeType,
-  PasscodeResultStatus,
   Biometry,
   hasUserSetPasscode,
   deleteUserPasscode,
