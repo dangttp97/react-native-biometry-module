@@ -1,8 +1,16 @@
 import { PureComponent } from "react";
-import { PasscodeResultStatus, PasscodeType } from "./commons";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
+export declare enum ScreenType {
+    select = "select",
+    input = "input"
+}
+export declare enum PasscodeResult {
+    initial = "initial",
+    success = "success",
+    locked = "locked"
+}
 export interface BiometryProps {
-    type: PasscodeType;
+    type: ScreenType;
     numberOfAttempts?: number;
     lockedTime?: number;
     alphabetCharsVisible: boolean;
@@ -13,7 +21,7 @@ export interface BiometryProps {
     passcodeAttemptsAsyncStorageName?: string;
     keypadCharHighlightedColor?: string;
     keypadCharNormalColor?: string;
-    passcodeStatus?: PasscodeResultStatus;
+    passcodeStatus?: PasscodeResult;
     deleteButtonIcon?: JSX.Element;
     biometryButtonIcon?: JSX.Element;
     lockedButton?: JSX.Element;
@@ -55,24 +63,37 @@ export interface BiometryProps {
     styleKeypadNumberCharNormal?: StyleProp<TextStyle>;
 }
 export interface BiometryState {
-    internalPasscodeStatus: PasscodeResultStatus;
+    internalPasscodeStatus: PasscodeResult;
     passcodeLocked: boolean;
 }
 /**
- * @param {PasscodeType} type {required} - Define type of screen
+ * @param {boolean} biometryEnabled - Specify using biometry or not
+ * @param {PasscodeType} type - Define type of screen
  * @param {number | undefined} numberOfAttempts - Specify max attempts of try before locked
  * @param {number | undefined} lockedTime - Specify lock time while running out attempts
  * @param {boolean | undefined} alphabetCharsVisible - Specify whether alphabets char display under numeric char
+ * @param {boolean | undefined} passcodeVisible = Is passcode visible when enter or not
+ * @param {string | undefined} timePasscodeLockedAsyncStorageName - AsyncStorage key name for time passcode locked
+ * @param {string | undefined} passcodeKeychainName - Keychain storage name for saving passcode
+ * @param {string | undefined} passcodeAttemptsAsyncStorageName - AsyncStorage key name for number of attempts
+ * @param {string | undefined} keypadCharHighlightedColor - Color of keypad when pressed
+ * @param {string | undefined} keypadCharNormalColor - Color of keypad when not pressed
+ * @param {PasscodeResult | undefined} passcodeStatus - Set current status of passcode
+ * @param {JSX.Element | undefined} deleteButtonIcon - Set delete icon for delete button
+ * @param {JSX.Element | undefined} biometryButtonIcon - Set icon for biometry button
+ * @param {JSX.Element | undefined} lockedButton - Set button element for locked page
+ * @param {JSX.Element | undefined} lockedPage - Locked page for replacement
+ * @param {JSX.Element | undefined} bottomLeftButton - Bottom left button in keypad
  */
 declare class Biometry extends PureComponent<BiometryProps, BiometryState> {
     static defaultProps: Partial<BiometryProps>;
     constructor(props: BiometryProps);
     componentDidMount(): void;
-    changeInternalStatus(status: PasscodeResultStatus): void;
+    changeInternalStatus(status: PasscodeResult): void;
     renderLockedScreen(): JSX.Element;
     render(): JSX.Element;
 }
 declare const hasUserSetPasscode: (serviceName?: string) => Promise<boolean>;
 declare const deleteUserPasscode: (serviceName?: string) => Promise<void>;
 declare const resetPasscodeInternalStates: (passcodeAttempsStorageName?: string, timePasscodeLockedStorageName?: string) => Promise<void>;
-export { PasscodeType, PasscodeResultStatus, Biometry, hasUserSetPasscode, deleteUserPasscode, resetPasscodeInternalStates, };
+export { Biometry, hasUserSetPasscode, deleteUserPasscode, resetPasscodeInternalStates, };
