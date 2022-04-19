@@ -9,13 +9,13 @@ yarn add git+https://github.com/dangttp97/rn-biometry-module
 
 ### Example
 ```tsx
-import {Biometry, PasscodeType} from 'rn-biometry-module'
+import {Biometry, ScreenType} from 'rn-biometry-module'
 
 /*
 Your render method
 */
 
-return <Biometry type={PasscodeType.select} biometryEnabled />
+return <Biometry type={ScreenType.select} biometryEnabled />
 ```
 
 ### Enumerations
