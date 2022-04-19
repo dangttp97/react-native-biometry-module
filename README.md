@@ -23,6 +23,7 @@ return <Biometry type={PasscodeType.select} biometryEnabled />
 Type of screen to show. Includes:
 - `select` Set passcode screen.
 - `input` Input passcode screen.
+- `changePasscode` Change passcode screen.
 
 ### Props
 - #### Generals
