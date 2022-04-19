@@ -1,7 +1,7 @@
-import { ReactNode, PureComponent } from "react";
-import { PasscodeResultStatus } from "../../commons";
-import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { Controller } from "@react-spring/native";
+import { ReactNode, PureComponent } from 'react';
+import { PasscodeResultStatus } from '../../commons';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { Controller } from '@react-spring/native';
 export interface LockedProps {
     timeToLock: number;
     title?: string;

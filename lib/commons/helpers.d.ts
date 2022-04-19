@@ -9,6 +9,6 @@ export declare const NoBiometryAuthConfig: {
 export declare const WithBiometryAuthConfig: {
     accessControl: Keychain.ACCESS_CONTROL;
 };
-export declare const hasPinCode: (serviceName: string) => Promise<boolean>;
-export declare const deletePinCode: (serviceName: string) => Promise<void>;
+export declare const hasPasscode: (serviceName: string) => Promise<boolean>;
+export declare const deletePasscode: (serviceName: string) => Promise<void>;
 export declare const resetInternalStates: (asyncStorageKeys: string[]) => Promise<void>;

@@ -1,7 +1,7 @@
-import { PureComponent } from "react";
-import { PasscodeType } from "../../commons";
-import { Controller } from "@react-spring/native";
-import { StyleProp, TextStyle, ViewStyle } from "react-native";
+import { PureComponent } from 'react';
+import { PasscodeType } from '../../commons';
+import { Controller } from '@react-spring/native';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 export interface PasscodeProps {
     alphabetCharsVisible?: boolean;
     passcodeVisible?: boolean;
@@ -19,7 +19,7 @@ export interface PasscodeProps {
     previousPasscode?: string;
     type: PasscodeType;
     validationRegex?: RegExp;
-    status?: "initial" | "success" | "failure" | "locked";
+    status?: 'initial' | 'success' | 'failure' | 'locked';
     delayBetweenAttempts?: number;
     deleteButtonIcon?: JSX.Element;
     bottomLeftButton?: JSX.Element;

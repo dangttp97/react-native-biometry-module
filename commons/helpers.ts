@@ -17,13 +17,13 @@ export const WithBiometryAuthConfig = Platform.select({
   ios: { accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY },
 })
 
-export const hasPinCode = async (serviceName: string) => {
+export const hasPasscode = async (serviceName: string) => {
   return await Keychain.getInternetCredentials(serviceName).then(res => {
     return !!res && !!res.password
   })
 }
 
-export const deletePinCode = async (serviceName: string) => {
+export const deletePasscode = async (serviceName: string) => {
   return await Keychain.resetInternetCredentials(serviceName)
 }
 

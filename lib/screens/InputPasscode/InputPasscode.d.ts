@@ -1,8 +1,8 @@
-import { PureComponent } from "react";
-import { PasscodeResultStatus } from "../../commons";
-import { PasscodeProps } from "../";
-import { StyleProp, ViewStyle } from "react-native";
-export interface InputPasscodeProps extends Omit<PasscodeProps, "previousPasscode" | "keypadType" | "status" | "endProcess"> {
+import { PureComponent } from 'react';
+import { PasscodeResultStatus } from '../../commons';
+import { PasscodeProps } from '../';
+import { StyleProp, ViewStyle } from 'react-native';
+export interface InputPasscodeProps extends Omit<PasscodeProps, 'previousPasscode' | 'keypadType' | 'status' | 'endProcess' | 'validationRegex'> {
     maxAttempts: number;
     passcodeAttemptsAsyncStorageName: string;
     timePasscodeLockedAsyncStorageName: string;
@@ -21,7 +21,7 @@ export interface InputPasscodeState {
     storedPasscode?: string;
     passcodeStatus: PasscodeResultStatus;
     locked: boolean;
-    biometryType: "faceRecognition" | "fingerprint" | undefined;
+    biometryType: 'faceRecognition' | 'fingerprint' | undefined;
 }
 export declare class InputPasscode extends PureComponent<InputPasscodeProps, InputPasscodeState> {
     static defaultProps: Partial<InputPasscodeProps>;

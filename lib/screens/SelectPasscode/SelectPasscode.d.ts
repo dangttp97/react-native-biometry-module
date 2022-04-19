@@ -1,7 +1,7 @@
-import { PureComponent } from "react";
-import { PasscodeType } from "../../commons";
-import { PasscodeProps } from "../";
-export interface SelectPasscodeProps extends Omit<PasscodeProps, "endProcess" | "title" | "subTitle" | "subTitleFail" | "titleFail"> {
+import { PureComponent } from 'react';
+import { PasscodeType } from '../../commons';
+import { PasscodeProps } from '../';
+export interface SelectPasscodeProps extends Omit<PasscodeProps, 'endProcess' | 'title' | 'subTitle' | 'subTitleFail' | 'titleFail' | 'previousPasscode'> {
     selectTitle?: string;
     selectSubtitle?: string;
     selectErrorTitle?: string;
@@ -14,6 +14,7 @@ export interface SelectPasscodeProps extends Omit<PasscodeProps, "endProcess" | 
     biometryEnabled: boolean;
     onCancel?: () => void;
     onSuccess?: (passcode: string) => void;
+    passcodeValidator?: RegExp;
 }
 interface SelectPasscodeState {
     type: PasscodeType;

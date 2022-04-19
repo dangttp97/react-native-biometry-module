@@ -1,6 +1,7 @@
-/** @enum {PasscodeType} */
 export declare enum PasscodeType {
     select = "select",
     confirm = "confirm",
-    input = "input"
+    input = "input",
+    inputOldPasscode = "inputOldPasscode",
+    selectNewPasscode = "selectNewPasscode"
 }
