@@ -1,4 +1,4 @@
-# rn-biometry-module 
+# react-native-biometry-module 
 
 ## A UI library support biometry authentication with passcode fallback for React Native
 
@@ -9,7 +9,7 @@ yarn add git+https://github.com/dangttp97/rn-biometry-module
 
 ### Example
 ```tsx
-import {Biometry, ScreenType} from 'rn-biometry-module'
+import {Biometry, ScreenType} from 'react-native-biometry-module'
 
 /*
 Your render method
