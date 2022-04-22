@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "lib": ["es2017"],
+    "jsx": "react-native",
+    "allowJs": true,
     "declaration": true,
     "moduleResolution": "node",
     "module": "commonjs",
@@ -10,5 +12,11 @@
     "types": ["react", "react-native"],
     "skipLibCheck": true,
     "esModuleInterop": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ]
 }
