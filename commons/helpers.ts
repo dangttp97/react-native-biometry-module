@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Platform } from 'react-native'
 import * as Keychain from 'react-native-keychain'
 
-export const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
+export const delay = (ms: number) =>
+  new Promise<void>((res) => setTimeout(res, ms))
 
 export const getSupportedBiometryType = Keychain.getSupportedBiometryType()
 
@@ -18,7 +19,7 @@ export const WithBiometryAuthConfig = Platform.select({
 })
 
 export const hasPasscode = async (serviceName: string) => {
-  return await Keychain.getInternetCredentials(serviceName).then(res => {
+  return await Keychain.getInternetCredentials(serviceName).then((res) => {
     return !!res && !!res.password
   })
 }

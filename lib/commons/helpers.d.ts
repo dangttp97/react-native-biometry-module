@@ -1,5 +1,5 @@
 import * as Keychain from 'react-native-keychain';
-export declare const delay: (ms: number) => Promise<unknown>;
+export declare const delay: (ms: number) => Promise<void>;
 export declare const getSupportedBiometryType: Promise<Keychain.BIOMETRY_TYPE>;
 export declare const NoBiometryAuthConfig: {
     accessControl: Keychain.ACCESS_CONTROL;
