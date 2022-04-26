@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "*",
-    "lodash": "^4.17.5",
-    "react-native-easy-grid": "^0.2.2",
-    "react-native-keychain": "^6.1.1",
+    "lodash": "*",
+    "react-native-easy-grid": "*",
+    "react-native-keychain": "*",
     "@react-spring/native": "*"
   },
   "devDependencies": {
