@@ -33,6 +33,7 @@ export interface BiometryProps {
     keypadButton?: (index: number, handler: (buttonIndex: string) => void) => JSX.Element;
     onSuccess?: (passcode: string) => void;
     onFailed?: (error?: any) => void;
+    onCancelChangePasscode?: () => void;
     passcodeSelectTitle?: string;
     passcodeSelectSubtitle?: string;
     passcodeSelectErrorTitle?: string;

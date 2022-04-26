@@ -57,6 +57,7 @@ export interface BiometryProps {
 
   onSuccess?: (passcode: string) => void
   onFailed?: (error?: any) => void
+  onCancelChangePasscode?: () => void
 
   passcodeSelectTitle?: string
   passcodeSelectSubtitle?: string
@@ -194,7 +195,25 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
               }
               onSuccess={this.props.onSuccess}
               onFailed={this.props.onFailed}
+              onCancel={this.props.onCancelChangePasscode}
               vibrateOnError={this.props.vibrateOnError}
+              styleContainer={this.props.stylePasscodeContainer}
+              styleTitle={this.props.stylePasscodeTitle}
+              styleSubTitle={this.props.stylePasscodeSubtitle}
+              stylePasscodeHidden={this.props.stylePasscodeHidden}
+              stylePasscodeText={this.props.stylePasscodeText}
+              styleKeypadAlphabetCharHighlighted={
+                this.props.styleKeypadAlphabetCharHighlighted
+              }
+              styleKeypadAlphabetCharNormal={
+                this.props.styleKeypadAlphabetCharNormal
+              }
+              styleKeypadNumberCharHighlighted={
+                this.props.styleKeypadNumberCharHighlighted
+              }
+              styleKeypadNumberCharNormal={
+                this.props.styleKeypadNumberCharNormal
+              }
             />
           )}
         {type === ScreenType.select &&
