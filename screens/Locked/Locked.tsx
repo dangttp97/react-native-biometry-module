@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { ReactNode, PureComponent } from 'react'
+import React, { ReactNode, PureComponent } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { Icons } from '../../assets'
 import { colors, delay, PasscodeResultStatus } from '../../commons'

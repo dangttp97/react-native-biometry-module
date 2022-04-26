@@ -1,4 +1,4 @@
-import { PureComponent } from 'react'
+import React, { PureComponent } from 'react'
 
 import { Icons } from '../../assets'
 import { colors, delay, grid, PasscodeType } from '../../commons'
