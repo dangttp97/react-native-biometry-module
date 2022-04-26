@@ -7,6 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/dangttp97/react-native-biometry-module.git"
   },
+  "homepage": "https://github.com/dangttp97/react-native-biometry-module#readme",
   "author": "Tran Thanh Phuong Dang",
   "license": "MIT",
   "private": true,
@@ -17,19 +18,29 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "*",
-    "@react-spring/native": "*",
-    "lodash": "*",
-    "react-native": "0.64.0",
-    "react-native-easy-grid": "0.2.2",
-    "react-native-haptic-feedback": "*",
-    "react-native-keychain": "*"
+    "lodash": "^4.17.5",
+    "react-native-easy-grid": "^0.2.2",
+    "react-native-keychain": "^6.1.1",
+    "@react-spring/native": "*"
   },
   "devDependencies": {
-    "@types/jest": "27.4.1",
-    "@types/lodash": "*",
+    "@types/lodash": "^4.14.104",
     "@types/react": "^17.0.1",
     "@types/react-native": "^0.64.0",
-    "@types/react-test-renderer": "^16.9.2",
-    "typescript": "^3.8.3"
+    "babel": "^6.23.0",
+    "babel-jest": "^23.4.0",
+    "enzyme": "^3.3.0",
+    "jest": "^23.3",
+    "jest-serializer-enzyme": "^1.0.0",
+    "react": "^17.0.1",
+    "react-addons-test-utils": "^15.6.2",
+    "react-dom": "^16.4.1",
+    "react-native": "^0.64.0",
+    "react-test-renderer": "^16.4.1",
+    "typescript": "^2.7.2"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
   }
 }
