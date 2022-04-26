@@ -19,7 +19,7 @@
     "@react-native-async-storage/async-storage": "*",
     "@react-spring/native": "*",
     "lodash": "*",
-    "react-native": "^0.64.0",
+    "react-native": "0.64.0",
     "react-native-easy-grid": "0.2.2",
     "react-native-haptic-feedback": "*",
     "react-native-keychain": "*"
