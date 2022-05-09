@@ -1,6 +1,5 @@
 import { PureComponent } from 'react';
 import { PasscodeType } from '../../commons';
-import { Controller } from '@react-spring/native';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 export interface PasscodeProps {
     alphabetCharsVisible?: boolean;
@@ -55,9 +54,6 @@ export declare class Passcode extends PureComponent<PasscodeProps, PasscodeState
     passcodeLength: number;
     static defaultProps: Partial<PasscodeProps>;
     constructor(props: PasscodeProps);
-    fadeInAnimation: Controller<{
-        opacity: number;
-    }>;
     componentDidMount(): void;
     componentDidUpdate(prevProps: Readonly<PasscodeProps>): void;
     failedAttempt(): Promise<void>;
@@ -67,7 +63,6 @@ export declare class Passcode extends PureComponent<PasscodeProps, PasscodeState
     handleKeypadTouch(text: string): Promise<void>;
     renderTitle(): JSX.Element;
     renderSubtitle: () => JSX.Element;
-    renderKeypadButton(text: string): JSX.Element;
     renderDeleteButton(): JSX.Element;
     renderPasscodeIndicator(): JSX.Element;
     render(): JSX.Element;

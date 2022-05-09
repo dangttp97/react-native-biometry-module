@@ -1,10 +1,13 @@
 import React, { PureComponent } from 'react'
 
 import {
-  deletePasscode,
   hasPasscode,
   PasscodeResultStatus,
-  resetInternalStates,
+  getPasscodeWithBiometryAuthentication,
+  changePasscode,
+  setNewPasscode,
+  getPasscode,
+  colors,
 } from './commons'
 import {
   InputPasscode,
@@ -14,12 +17,13 @@ import {
 } from './screens'
 import { StyleProp, TextStyle, ViewStyle } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
-enum ScreenType {
-  select = 'select',
-  input = 'input',
-  changePasscode = 'change',
-}
+import {
+  CountdownTimer,
+  Keypad,
+  PasscodeIndicator,
+  Typography,
+} from './components'
+import { Icons } from './assets'
 
 enum PasscodeResult {
   initial = 'initial',
@@ -28,7 +32,7 @@ enum PasscodeResult {
 }
 
 export interface BiometryProps {
-  type: ScreenType
+  type: 'select' | 'change' | 'input'
   numberOfAttempts?: number
   lockedTime?: number
   alphabetCharsVisible: boolean
@@ -111,7 +115,7 @@ const timePasscodeLockedAsyncStorageNameDefault = 'TimePasscodeLockedDefault'
  * @param {number | undefined} lockedTime - Specify lock time while running out attempts
  * @param {boolean | undefined} alphabetCharsVisible - Specify whether alphabets char display under numeric char
  */
-class Biometry extends PureComponent<BiometryProps, BiometryState> {
+class BuildInLayout extends PureComponent<BiometryProps, BiometryState> {
   static defaultProps: Partial<BiometryProps> = {
     numberOfAttempts: 3,
     lockedTime: 300000,
@@ -186,7 +190,7 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
 
     return (
       <>
-        {type === ScreenType.changePasscode &&
+        {type === 'change' &&
           !this.state.passcodeLocked &&
           this.state.internalPasscodeStatus !== PasscodeResult.locked && (
             <ChangePasscode
@@ -216,7 +220,7 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
               }
             />
           )}
-        {type === ScreenType.select &&
+        {type === 'select' &&
           !this.state.passcodeLocked &&
           this.state.internalPasscodeStatus !== PasscodeResult.locked && (
             <SelectPasscode
@@ -255,7 +259,7 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
               }
             />
           )}
-        {type === ScreenType.input &&
+        {type === 'input' &&
           !this.state.passcodeLocked &&
           this.state.internalPasscodeStatus !== PasscodeResult.locked && (
             <InputPasscode
@@ -323,29 +327,59 @@ class Biometry extends PureComponent<BiometryProps, BiometryState> {
   }
 }
 
-const hasUserSetPasscode = (serviceName?: string) => {
-  return hasPasscode(serviceName || passcodeKeychainNameDefault)
+const hasUserSetPasscode = (keychainName?: string) => {
+  return hasPasscode(keychainName || passcodeKeychainNameDefault)
 }
 
-const deleteUserPasscode = (serviceName?: string) => {
-  return deletePasscode(serviceName || passcodeKeychainNameDefault)
+const setPasscode = (newPasscode: string, keychainName?: string) => {
+  return setNewPasscode(
+    keychainName || passcodeKeychainNameDefault,
+    newPasscode,
+  )
 }
 
-const resetPasscodeInternalStates = (
-  passcodeAttempsStorageName?: string,
-  timePasscodeLockedStorageName?: string,
+const changePreviousPasscode = (
+  oldPasscode: string,
+  newPasscode: string,
+  keychainName?: string,
 ) => {
-  return resetInternalStates([
-    passcodeAttempsStorageName || passcodeAttemptsAsyncStorageNameDefault,
-    timePasscodeLockedStorageName || timePasscodeLockedAsyncStorageNameDefault,
-  ])
+  return changePasscode(
+    keychainName || passcodeKeychainNameDefault,
+    oldPasscode,
+    newPasscode,
+  )
 }
 
-export {
-  Biometry,
-  ScreenType,
-  PasscodeResult,
-  hasUserSetPasscode,
-  deleteUserPasscode,
-  resetPasscodeInternalStates,
+const getPasscodeByBiometric = (keychainName?: string) => {
+  return getPasscodeWithBiometryAuthentication(
+    keychainName || passcodeKeychainNameDefault,
+  )
 }
+
+const getPasscodeDefault = (keychainName?: string) => {
+  return getPasscode(keychainName || passcodeKeychainNameDefault)
+}
+
+// MARK: Export section
+const Helpers = {
+  hasUserSetPasscode,
+  changePasscode,
+  getPasscodeByBiometric,
+  changePreviousPasscode,
+  setPasscode,
+  getPasscodeDefault,
+  defaultKeychainName: passcodeKeychainNameDefault,
+}
+
+const Biometry = {
+  Helpers: Helpers,
+  BuildInLayout: BuildInLayout,
+  Colors: colors,
+  Icons: Icons,
+  CountdownTimer: CountdownTimer,
+  Keypad: Keypad,
+  Indicator: PasscodeIndicator,
+  Typography: Typography,
+}
+
+export default Biometry

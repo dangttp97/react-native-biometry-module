@@ -4,7 +4,7 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import { Icons } from '../../assets'
 import { colors, delay, PasscodeResultStatus } from '../../commons'
 import { StyleProp, TextStyle, ViewStyle } from 'react-native'
-import { animated, Controller } from '@react-spring/native'
+import { CountdownTimer } from '../../components'
 
 export interface LockedProps {
   timeToLock: number
@@ -15,11 +15,11 @@ export interface LockedProps {
   timePasscodeLockedAsyncStorageName: string
   passcodeAttemptsAsyncStorageName: string
 
-  titleComponent?: ReactNode
-  timerComponent?: (minutes: number, seconds: number) => ReactNode
-  iconComponent?: ReactNode
-  lockedIconComponent?: ReactNode
-  buttonComponent?: ReactNode
+  titleComponent?: JSX.Element
+  timerComponent?: (minutes: number, seconds: number) => JSX.Element
+  iconComponent?: JSX.Element
+  lockedIconComponent?: JSX.Element
+  buttonComponent?: JSX.Element
 
   changeStatus: (status: PasscodeResultStatus) => void
 
@@ -37,25 +37,10 @@ interface LockedState {
   timeDifferent: number
 }
 
-const AnimatedView = animated(View)
-
 export class Locked extends PureComponent<LockedProps, LockedState> {
   static defaultProps: Partial<LockedProps> = {
     timeToLock: 300000,
   }
-
-  animations = new Controller({
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 1,
-    },
-    config: {
-      duration: 700,
-    },
-    delay: 300,
-  })
 
   timeLocked: number
   isUnmounted: boolean
@@ -137,19 +122,28 @@ export class Locked extends PureComponent<LockedProps, LockedState> {
   }
 
   renderLockedScreen() {
-    this.animations.start()
     const minutes = Math.floor(this.state.timeDifferent / 1000 / 60)
     const seconds = Math.floor(this.state.timeDifferent / 1000) % 60
 
     return (
-      <AnimatedView style={this.animations.springs}>
+      <View>
         <View style={[styles.textContainer, this.props.styleTextContainer]}>
           {this.props.titleComponent
             ? this.props.titleComponent
             : this.renderTitle()}
-          {this.props.timerComponent
-            ? this.props.timerComponent(minutes, seconds)
-            : this.renderTimer(minutes, seconds)}
+          {this.props.timerComponent ? (
+            this.props.timerComponent(minutes, seconds)
+          ) : (
+            <CountdownTimer
+              lockedTime={this.state.timeDifferent}
+              timePasscodeLockedAsyncStorageName={
+                this.props.timePasscodeLockedAsyncStorageName
+              }
+              passcodeAttemptsAsyncStorageName={
+                this.props.passcodeAttemptsAsyncStorageName
+              }
+            />
+          )}
           {this.props.iconComponent
             ? this.props.iconComponent
             : this.renderIcon()}
@@ -162,7 +156,7 @@ export class Locked extends PureComponent<LockedProps, LockedState> {
           </Text>
         </View>
         {this.props.buttonComponent ? this.props.buttonComponent : undefined}
-      </AnimatedView>
+      </View>
     )
   }
 

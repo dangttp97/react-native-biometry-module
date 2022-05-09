@@ -1,7 +1,6 @@
-import { ReactNode, PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { PasscodeResultStatus } from '../../commons';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
-import { Controller } from '@react-spring/native';
 export interface LockedProps {
     timeToLock: number;
     title?: string;
@@ -10,11 +9,11 @@ export interface LockedProps {
     buttonTitle?: string;
     timePasscodeLockedAsyncStorageName: string;
     passcodeAttemptsAsyncStorageName: string;
-    titleComponent?: ReactNode;
-    timerComponent?: (minutes: number, seconds: number) => ReactNode;
-    iconComponent?: ReactNode;
-    lockedIconComponent?: ReactNode;
-    buttonComponent?: ReactNode;
+    titleComponent?: JSX.Element;
+    timerComponent?: (minutes: number, seconds: number) => JSX.Element;
+    iconComponent?: JSX.Element;
+    lockedIconComponent?: JSX.Element;
+    buttonComponent?: JSX.Element;
     changeStatus: (status: PasscodeResultStatus) => void;
     styleContainer?: StyleProp<ViewStyle>;
     styleIconContainer?: StyleProp<ViewStyle>;
@@ -30,9 +29,6 @@ interface LockedState {
 }
 export declare class Locked extends PureComponent<LockedProps, LockedState> {
     static defaultProps: Partial<LockedProps>;
-    animations: Controller<{
-        opacity: number;
-    }>;
     timeLocked: number;
     isUnmounted: boolean;
     constructor(props: LockedProps);

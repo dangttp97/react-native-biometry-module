@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react'
 
 import { Icons } from '../../assets'
 import { colors, delay, grid, PasscodeType } from '../../commons'
-import { animated, Controller } from '@react-spring/native'
 import * as _ from 'lodash'
 import {
   Dimensions,
@@ -20,6 +19,8 @@ import {
 } from 'react-native'
 import { Col, Grid, Row } from 'react-native-easy-grid'
 import * as ReactNativeHapticFeedback from 'react-native-haptic-feedback'
+import { PasscodeIndicator } from '../../components/PasscodeIndicator'
+import { Keypad, Typography } from '../../components'
 
 export interface PasscodeProps {
   alphabetCharsVisible?: boolean
@@ -78,8 +79,6 @@ interface PasscodeState {
   deleteButtonReverse: boolean
 }
 
-const AnimatedView = animated(View)
-
 export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
   passcodeLength = 4
 
@@ -103,20 +102,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
     }
   }
 
-  fadeInAnimation = new Controller({
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 1,
-    },
-    config: {
-      duration: 500,
-    },
-  })
-
   componentDidMount() {
-    this.fadeInAnimation.start()
     if (this.props.getCurrentLength) {
       this.props.getCurrentLength(0)
     }
@@ -283,102 +269,84 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
     )
   }
 
-  renderKeypadButton(text: string) {
-    const buttonArray = new Map([
-      ['1', ' '],
-      ['2', 'ABC'],
-      ['3', 'DEF'],
-      ['4', 'GHI'],
-      ['5', 'JKL'],
-      ['6', 'MNO'],
-      ['7', 'PQRS'],
-      ['8', 'TUV'],
-      ['9', 'WXYZ'],
-      ['0', ' '],
-    ])
-    const disabled =
-      (this.state.passcode.length === this.passcodeLength ||
-        this.state.showError) &&
-      !this.state.attemptFailed
+  // renderKeypadButton(text: string) {
+  //   const buttonArray = new Map([
+  //     ['1', ' '],
+  //     ['2', 'ABC'],
+  //     ['3', 'DEF'],
+  //     ['4', 'GHI'],
+  //     ['5', 'JKL'],
+  //     ['6', 'MNO'],
+  //     ['7', 'PQRS'],
+  //     ['8', 'TUV'],
+  //     ['9', 'WXYZ'],
+  //     ['0', ' '],
+  //   ])
+  //   const disabled =
+  //     (this.state.passcode.length === this.passcodeLength ||
+  //       this.state.showError) &&
+  //     !this.state.attemptFailed
 
-    return (
-      <AnimatedView style={this.fadeInAnimation.springs}>
-        <TouchableHighlight
-          underlayColor={this.props.keypadHighlightedColor}
-          disabled={disabled}
-          onShowUnderlay={() =>
-            this.setState({
-              selectedButtonText: text,
-            })
-          }
-          onHideUnderlay={() =>
-            this.setState({
-              selectedButtonText: '',
-            })
-          }
-          onPress={() => {
-            this.handleKeypadTouch(text)
-          }}
-          style={styles.keypadNormal}>
-          <View>
-            <Text
-              style={
-                this.state.selectedButtonText === text
-                  ? [
-                      styles.keypadNumberHighlighted,
-                      this.props.styleKeypadNumberCharHighlighted,
-                    ]
-                  : [
-                      styles.keypadNumberNormal,
-                      this.props.styleKeypadNumberCharNormal,
-                    ]
-              }>
-              {text}
-            </Text>
-            {this.props.alphabetCharsVisible && (
-              <Text
-                style={
-                  this.state.selectedButtonText === text
-                    ? [
-                        styles.keypadAlphabetHighlighted,
-                        this.props.styleKeypadAlphabetCharHighlighted,
-                      ]
-                    : [
-                        styles.keypadAlphabetNormal,
-                        this.props.styleKeypadAlphabetCharNormal,
-                      ]
-                }>
-                {buttonArray.get(text)}
-              </Text>
-            )}
-          </View>
-        </TouchableHighlight>
-      </AnimatedView>
-    )
-  }
+  //   return (
+  //     <AnimatedView style={this.fadeInAnimation.springs}>
+  //       <TouchableHighlight
+  //         underlayColor={this.props.keypadHighlightedColor}
+  //         disabled={disabled}
+  //         onShowUnderlay={() =>
+  //           this.setState({
+  //             selectedButtonText: text,
+  //           })
+  //         }
+  //         onHideUnderlay={() =>
+  //           this.setState({
+  //             selectedButtonText: '',
+  //           })
+  //         }
+  //         onPress={() => {
+  //           this.handleKeypadTouch(text)
+  //         }}
+  //         style={styles.keypadNormal}>
+  //         <View>
+  //           <Text
+  //             style={
+  //               this.state.selectedButtonText === text
+  //                 ? [
+  //                     styles.keypadNumberHighlighted,
+  //                     this.props.styleKeypadNumberCharHighlighted,
+  //                   ]
+  //                 : [
+  //                     styles.keypadNumberNormal,
+  //                     this.props.styleKeypadNumberCharNormal,
+  //                   ]
+  //             }>
+  //             {text}
+  //           </Text>
+  //           {this.props.alphabetCharsVisible && (
+  //             <Text
+  //               style={
+  //                 this.state.selectedButtonText === text
+  //                   ? [
+  //                       styles.keypadAlphabetHighlighted,
+  //                       this.props.styleKeypadAlphabetCharHighlighted,
+  //                     ]
+  //                   : [
+  //                       styles.keypadAlphabetNormal,
+  //                       this.props.styleKeypadAlphabetCharNormal,
+  //                     ]
+  //               }>
+  //               {buttonArray.get(text)}
+  //             </Text>
+  //           )}
+  //         </View>
+  //       </TouchableHighlight>
+  //     </AnimatedView>
+  //   )
+  // }
 
   renderDeleteButton() {
-    const deleteAnimation = new Controller({
-      from: {
-        translateX: -10,
-      },
-      to: {
-        translateX: 0,
-      },
-      config: {
-        duration: 20,
-      },
-      reverse: this.state.deleteButtonReverse,
-    })
-    deleteAnimation.start()
     return (
       <TouchableWithoutFeedback
         onPress={() => {
-          this.setState({ deleteButtonReverse: true })
-          setTimeout(() => {
-            this.setState({ deleteButtonReverse: false })
-          }, 100)
-
           if (this.state.passcode.length > 0) {
             const newPass = this.state.passcode.slice(0, -1)
             this.setState({ passcode: newPass })
@@ -393,9 +361,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
           ) : (
             <>
               {!this.props.deleteButtonDisabled && (
-                <animated.View key="delete" style={deleteAnimation.springs}>
-                  <Image source={Icons.ic_delete} resizeMode="cover" />
-                </animated.View>
+                <Image source={Icons.ic_delete} resizeMode="cover" />
               )}
               {this.props.deleteButtonText && (
                 <Text>{this.props.deleteButtonText}</Text>
@@ -501,12 +467,68 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
   render() {
     return (
       <View style={[styles.container, this.props.styleContainer]}>
-        <AnimatedView key="title" style={this.fadeInAnimation.springs}>
+        {/* <AnimatedView key="title" style={this.fadeInAnimation.springs}>
           {this.renderTitle()}
           {this.renderSubtitle()}
-        </AnimatedView>
-        {this.renderPasscodeIndicator()}
-        <Grid style={styles.grid}>
+        </AnimatedView> */}
+        {/* {this.renderPasscodeIndicator()} */}
+        <Typography
+          title={this.props.title}
+          description={this.props.subTitle}
+          titleError={this.props.titleFail}
+          descriptionError={this.props.subTitleFail}
+          showError={this.state.showError}
+        />
+        <PasscodeIndicator
+          passcodeLength={4}
+          currentPasscode={this.state.passcode}
+          highlightColor={colors.primary}
+          normalColor={colors.description}
+        />
+        <Keypad
+          alphabetCharsVisible
+          disabled={false}
+          deleteButtonDisabled={false}
+          isError={this.state.showError}
+          onEndPasscode={(passcode: string) => {
+            switch (this.props.type) {
+              case PasscodeType.select:
+                if (
+                  this.props.validationRegex &&
+                  this.props.validationRegex.test(passcode)
+                ) {
+                  this.showError(true)
+                } else {
+                  this.endProcess(passcode)
+                }
+                break
+              case PasscodeType.confirm:
+                if (
+                  this.props.previousPasscode &&
+                  this.props.previousPasscode !== passcode
+                ) {
+                  this.showError()
+                } else {
+                  this.endProcess(passcode)
+                }
+                break
+              case PasscodeType.input:
+                if (
+                  this.props.previousPasscode &&
+                  this.props.previousPasscode !== passcode
+                ) {
+                  this.showError()
+                } else {
+                  this.endProcess(passcode)
+                }
+                break
+              default:
+                break
+            }
+          }}
+        />
+
+        {/* <Grid style={styles.grid}>
           <Row key="firstRow" style={styles.row}>
             {_.range(1, 4).map((index: number) => {
               return (
@@ -567,7 +589,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
               </>
             </Col>
           </Row>
-        </Grid>
+        </Grid> */}
       </View>
     )
   }

@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/dangttp97/react-native-biometry-module.git"
   },
+  "files": [
+    "lib/"
+  ],
   "scripts": {
     "build": "tsc",
     "compile": "npm run build",
@@ -18,7 +21,6 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "*",
-    "@react-spring/native": "*",
     "lodash": "*",
     "react-native-easy-grid": "*",
     "react-native-haptic-feedback": "1.13.1",

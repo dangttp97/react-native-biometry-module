@@ -19,6 +19,8 @@
     "esModuleInterop": true
   },
   "exclude": [
+    "example/",
+    "lib/",
     "node_modules",
     "babel.config.js",
     "metro.config.js",

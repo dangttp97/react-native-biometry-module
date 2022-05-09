@@ -1,17 +1,14 @@
+/// <reference types="react-native-keychain" />
 import { PureComponent } from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
-declare enum ScreenType {
-    select = "select",
-    input = "input",
-    changePasscode = "change"
-}
+import { CountdownTimer, Keypad, PasscodeIndicator, Typography } from './components';
 declare enum PasscodeResult {
     initial = "initial",
     success = "success",
     locked = "locked"
 }
 export interface BiometryProps {
-    type: ScreenType;
+    type: 'select' | 'change' | 'input';
     numberOfAttempts?: number;
     lockedTime?: number;
     alphabetCharsVisible: boolean;
@@ -75,7 +72,7 @@ export interface BiometryState {
  * @param {number | undefined} lockedTime - Specify lock time while running out attempts
  * @param {boolean | undefined} alphabetCharsVisible - Specify whether alphabets char display under numeric char
  */
-declare class Biometry extends PureComponent<BiometryProps, BiometryState> {
+declare class BuildInLayout extends PureComponent<BiometryProps, BiometryState> {
     static defaultProps: Partial<BiometryProps>;
     constructor(props: BiometryProps);
     componentDidMount(): void;
@@ -83,7 +80,35 @@ declare class Biometry extends PureComponent<BiometryProps, BiometryState> {
     renderLockedScreen(): JSX.Element;
     render(): JSX.Element;
 }
-declare const hasUserSetPasscode: (serviceName?: string) => Promise<boolean>;
-declare const deleteUserPasscode: (serviceName?: string) => Promise<void>;
-declare const resetPasscodeInternalStates: (passcodeAttempsStorageName?: string, timePasscodeLockedStorageName?: string) => Promise<void>;
-export { Biometry, ScreenType, PasscodeResult, hasUserSetPasscode, deleteUserPasscode, resetPasscodeInternalStates, };
+declare const Biometry: {
+    Helpers: {
+        hasUserSetPasscode: (keychainName?: string) => Promise<boolean>;
+        changePasscode: (serviceName: string, oldPasscode: string, newPasscode: string) => Promise<void>;
+        getPasscodeByBiometric: (keychainName?: string) => Promise<string>;
+        changePreviousPasscode: (oldPasscode: string, newPasscode: string, keychainName?: string) => Promise<void>;
+        setPasscode: (newPasscode: string, keychainName?: string) => Promise<false | import("react-native-keychain").Result>;
+        getPasscodeDefault: (keychainName?: string) => Promise<string>;
+        defaultKeychainName: string;
+    };
+    BuildInLayout: typeof BuildInLayout;
+    Colors: {
+        fail: string;
+        primary: string;
+        keypadBackground: string;
+        description: string;
+        title: string;
+        white: string;
+        transparent: string;
+    };
+    Icons: {
+        ic_locked: any;
+        ic_fingerprint: any;
+        ic_face: any;
+        ic_delete: any;
+    };
+    CountdownTimer: typeof CountdownTimer;
+    Keypad: typeof Keypad;
+    Indicator: typeof PasscodeIndicator;
+    Typography: typeof Typography;
+};
+export default Biometry;

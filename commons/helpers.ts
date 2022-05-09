@@ -18,6 +18,35 @@ export const WithBiometryAuthConfig = Platform.select({
   ios: { accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY },
 })
 
+export const setNewPasscode = async (serviceName: string, newPasscode: string) => {
+  return await Keychain.setInternetCredentials(serviceName, serviceName, newPasscode)
+}
+
+export const getPasscodeWithBiometryAuthentication = async (serviceName: string) => {
+  return await Keychain.getInternetCredentials(serviceName, WithBiometryAuthConfig).then(res => {
+    if (res) {
+      return res.password
+    }
+  })
+}
+
+export const getPasscode = async (serviceName: string) => {
+  return await Keychain.getInternetCredentials(serviceName, NoBiometryAuthConfig).then(res => {
+    if (res) {
+      return res.password
+    }
+  })
+}
+
+export const changePasscode = async (serviceName: string, oldPasscode: string, newPasscode: string) => {
+  return await Keychain.getInternetCredentials(serviceName, NoBiometryAuthConfig).then(res => {
+    if (res && res.password === oldPasscode) {
+      deletePasscode(serviceName)
+      setNewPasscode(serviceName, newPasscode)
+    }
+  })
+}
+
 export const hasPasscode = async (serviceName: string) => {
   return await Keychain.getInternetCredentials(serviceName).then((res) => {
     return !!res && !!res.password
