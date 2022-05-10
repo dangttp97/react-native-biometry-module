@@ -13,19 +13,20 @@ import { View } from 'react-native'
 import Biometry from 'react-native-biometry-module'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { CreatePasscode } from '@screens'
+import { CreatePasscode, LockedScreen } from './src/screens'
 
-const BiometryScreen = Biometry.Screen
 const Stack = createNativeStackNavigator()
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="CreatePasscode">
         <Stack.Screen name="CreatePasscode" component={CreatePasscode} />
+        <Stack.Screen name="LockedScreen" component={LockedScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
+  // return <CreatePasscode />
 }
 
 export default App

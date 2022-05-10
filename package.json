@@ -6,13 +6,17 @@
   "homepage": "https://github.com/dangttp97/react-native-biometry-module#readme",
   "author": "Tran Thanh Phuong Dang",
   "license": "MIT",
+  "readmeFilename": "README.md",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dangttp97/react-native-biometry-module.git"
+    "url": "git+https://github.com/dangttp97/react-native-biometry-module.git",
+    "baseUrl": "https://github.com/dangttp97/react-native-biometry-module"
   },
   "files": [
-    "lib/"
+    "lib/index.js",
+    "lib/**/*",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",
@@ -22,7 +26,6 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "*",
     "lodash": "*",
-    "react-native-easy-grid": "*",
     "react-native-haptic-feedback": "1.13.1",
     "react-native-keychain": "*"
   },

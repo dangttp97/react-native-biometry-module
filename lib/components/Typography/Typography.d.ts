@@ -1,9 +1,9 @@
-import { PureComponent } from 'react';
+import { Component } from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 export interface TypographyProps {
     showError: boolean;
     title: string;
-    description: string;
+    description?: string;
     titleError?: string;
     descriptionError?: string;
     styleContainer?: StyleProp<ViewStyle>;
@@ -12,6 +12,6 @@ export interface TypographyProps {
     styleTitleError?: StyleProp<TextStyle>;
     styleDescriptionError?: StyleProp<TextStyle>;
 }
-export declare class Typography extends PureComponent<TypographyProps> {
+export declare class Typography extends Component<TypographyProps> {
     render(): JSX.Element;
 }

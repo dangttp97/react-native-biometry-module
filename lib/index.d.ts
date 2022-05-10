@@ -1,7 +1,9 @@
 /// <reference types="react-native-keychain" />
 import { PureComponent } from 'react';
+import { colors } from './commons';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { CountdownTimer, Keypad, PasscodeIndicator, Typography } from './components';
+import { Icons } from './assets';
 declare enum PasscodeResult {
     initial = "initial",
     success = "success",
@@ -80,35 +82,15 @@ declare class BuildInLayout extends PureComponent<BiometryProps, BiometryState> 
     renderLockedScreen(): JSX.Element;
     render(): JSX.Element;
 }
-declare const Biometry: {
-    Helpers: {
-        hasUserSetPasscode: (keychainName?: string) => Promise<boolean>;
-        changePasscode: (serviceName: string, oldPasscode: string, newPasscode: string) => Promise<void>;
-        getPasscodeByBiometric: (keychainName?: string) => Promise<string>;
-        changePreviousPasscode: (oldPasscode: string, newPasscode: string, keychainName?: string) => Promise<void>;
-        setPasscode: (newPasscode: string, keychainName?: string) => Promise<false | import("react-native-keychain").Result>;
-        getPasscodeDefault: (keychainName?: string) => Promise<string>;
-        defaultKeychainName: string;
-    };
-    BuildInLayout: typeof BuildInLayout;
-    Colors: {
-        fail: string;
-        primary: string;
-        keypadBackground: string;
-        description: string;
-        title: string;
-        white: string;
-        transparent: string;
-    };
-    Icons: {
-        ic_locked: any;
-        ic_fingerprint: any;
-        ic_face: any;
-        ic_delete: any;
-    };
-    CountdownTimer: typeof CountdownTimer;
-    Keypad: typeof Keypad;
-    Indicator: typeof PasscodeIndicator;
-    Typography: typeof Typography;
+declare const Helpers: {
+    hasUserSetPasscode: (keychainName?: string) => Promise<boolean>;
+    changePasscode: (serviceName: string, oldPasscode: string, newPasscode: string) => Promise<void>;
+    getPasscodeByBiometric: (keychainName?: string) => Promise<string>;
+    changePreviousPasscode: (oldPasscode: string, newPasscode: string, keychainName?: string) => Promise<void>;
+    setPasscode: (newPasscode: string, keychainName?: string) => Promise<false | import("react-native-keychain").Result>;
+    getPasscodeDefault: (keychainName?: string) => Promise<string>;
+    defaultKeychainName: string;
 };
+declare const Biometry: typeof BuildInLayout;
+export { Helpers, colors as Colors, Icons, CountdownTimer, Keypad, PasscodeIndicator as Indicator, Typography, };
 export default Biometry;

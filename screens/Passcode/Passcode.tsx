@@ -17,7 +17,6 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
-import { Col, Grid, Row } from 'react-native-easy-grid'
 import * as ReactNativeHapticFeedback from 'react-native-haptic-feedback'
 import { PasscodeIndicator } from '../../components/PasscodeIndicator'
 import { Keypad, Typography } from '../../components'

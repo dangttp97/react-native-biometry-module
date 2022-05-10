@@ -1,4 +1,4 @@
-import { PureComponent } from 'react'
+import React, { Component } from 'react'
 import {
   StyleProp,
   StyleSheet,
@@ -7,11 +7,12 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
+import { colors } from '../../commons'
 
 export interface TypographyProps {
   showError: boolean
   title: string
-  description: string
+  description?: string
   titleError?: string
   descriptionError?: string
 
@@ -21,7 +22,8 @@ export interface TypographyProps {
   styleTitleError?: StyleProp<TextStyle>
   styleDescriptionError?: StyleProp<TextStyle>
 }
-export class Typography extends PureComponent<TypographyProps> {
+
+export class Typography extends Component<TypographyProps> {
   render() {
     return (
       <>
@@ -30,9 +32,11 @@ export class Typography extends PureComponent<TypographyProps> {
             <Text style={[styles.title, this.props.styleTitle]}>
               {this.props.title}
             </Text>
-            <Text style={[styles.description, this.props.styleDescription]}>
-              {this.props.description}
-            </Text>
+            {this.props.description && (
+              <Text style={[styles.description, this.props.styleDescription]}>
+                {this.props.description}
+              </Text>
+            )}
           </View>
         )}
         {this.props.showError && (
@@ -40,13 +44,15 @@ export class Typography extends PureComponent<TypographyProps> {
             <Text style={[styles.titleError, this.props.styleTitleError]}>
               {this.props.titleError}
             </Text>
-            <Text
-              style={[
-                styles.descriptionError,
-                this.props.styleDescriptionError,
-              ]}>
-              {this.props.descriptionError}
-            </Text>
+            {this.props.descriptionError && (
+              <Text
+                style={[
+                  styles.descriptionError,
+                  this.props.styleDescriptionError,
+                ]}>
+                {this.props.descriptionError}
+              </Text>
+            )}
           </View>
         )}
       </>
@@ -57,9 +63,34 @@ export class Typography extends PureComponent<TypographyProps> {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
+    width: '100%',
   },
-  title: {},
-  titleError: {},
-  description: {},
-  descriptionError: {},
+  title: {
+    fontSize: 22,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: colors.title,
+    marginBottom: 20,
+  },
+  titleError: {
+    fontSize: 22,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: colors.title,
+    marginBottom: 20,
+  },
+  description: {
+    fontSize: 15,
+    fontWeight: '500',
+    textAlign: 'center',
+    color: colors.description,
+    marginBottom: 'auto',
+  },
+  descriptionError: {
+    fontSize: 15,
+    fontWeight: '500',
+    textAlign: 'center',
+    color: colors.fail,
+    marginBottom: 'auto',
+  },
 })

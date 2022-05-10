@@ -369,17 +369,19 @@ const Helpers = {
   setPasscode,
   getPasscodeDefault,
   defaultKeychainName: passcodeKeychainNameDefault,
+  defaultLockedTimeAsyncStorageName: timePasscodeLockedAsyncStorageNameDefault,
+  defaultPasscodeAttemptsAsyncStorageName:
+    passcodeAttemptsAsyncStorageNameDefault,
 }
 
-const Biometry = {
-  Helpers: Helpers,
-  BuildInLayout: BuildInLayout,
-  Colors: colors,
-  Icons: Icons,
-  CountdownTimer: CountdownTimer,
-  Keypad: Keypad,
-  Indicator: PasscodeIndicator,
-  Typography: Typography,
+const Biometry = BuildInLayout
+export {
+  Helpers,
+  colors as Colors,
+  Icons,
+  CountdownTimer,
+  Keypad,
+  PasscodeIndicator as Indicator,
+  Typography,
 }
-
 export default Biometry
