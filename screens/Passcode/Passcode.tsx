@@ -71,7 +71,7 @@ export interface PasscodeProps {
 interface PasscodeState {
   movingCordinate: { x: number; y: number }
   passcode: string
-  showError: boolean
+  isError: boolean
   selectedButtonText: string
   attemptFailed: boolean
   changeScreen: boolean
@@ -93,7 +93,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
     this.state = {
       passcode: '',
       movingCordinate: { x: 0, y: 0 },
-      showError: false,
+      isError: false,
       selectedButtonText: '',
       attemptFailed: false,
       changeScreen: false,
@@ -119,7 +119,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
   async failedAttempt() {
     await delay(300)
     this.setState({
-      showError: true,
+      isError: true,
       attemptFailed: true,
       changeScreen: false,
     })
@@ -177,12 +177,12 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
     this.setState({ changeScreen: true })
     await delay(300)
     this.setState({
-      showError: true,
+      isError: true,
       changeScreen: false,
     })
     this.shake()
     await delay(3000)
-    this.setState({ changeScreen: true, showError: false, passcode: '' })
+    this.setState({ changeScreen: true, isError: false, passcode: '' })
     await delay(200)
     if (this.props.endProcess) {
       this.props.endProcess(this.state.passcode, isErrorValidate)
@@ -251,7 +251,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
   renderTitle() {
     return (
       <Text style={[styles.title, this.props.styleTitle]}>
-        {this.state.showError ? this.props.titleFail : this.props.title}
+        {this.state.isError ? this.props.titleFail : this.props.title}
       </Text>
     )
   }
@@ -260,87 +260,85 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
     return (
       <Text
         style={[
-          this.state.showError ? styles.subtitleError : styles.subtitleNormal,
+          this.state.isError ? styles.subtitleError : styles.subtitleNormal,
           this.props.styleSubTitle,
         ]}>
-        {this.state.showError ? this.props.subTitleFail : this.props.subTitle}
+        {this.state.isError ? this.props.subTitleFail : this.props.subTitle}
       </Text>
     )
   }
 
-  // renderKeypadButton(text: string) {
-  //   const buttonArray = new Map([
-  //     ['1', ' '],
-  //     ['2', 'ABC'],
-  //     ['3', 'DEF'],
-  //     ['4', 'GHI'],
-  //     ['5', 'JKL'],
-  //     ['6', 'MNO'],
-  //     ['7', 'PQRS'],
-  //     ['8', 'TUV'],
-  //     ['9', 'WXYZ'],
-  //     ['0', ' '],
-  //   ])
-  //   const disabled =
-  //     (this.state.passcode.length === this.passcodeLength ||
-  //       this.state.showError) &&
-  //     !this.state.attemptFailed
+  renderKeypadButton(text: string) {
+    const buttonArray = new Map([
+      ['1', ' '],
+      ['2', 'ABC'],
+      ['3', 'DEF'],
+      ['4', 'GHI'],
+      ['5', 'JKL'],
+      ['6', 'MNO'],
+      ['7', 'PQRS'],
+      ['8', 'TUV'],
+      ['9', 'WXYZ'],
+      ['0', ' '],
+    ])
+    const disabled =
+      (this.state.passcode.length === this.passcodeLength ||
+        this.state.isError) &&
+      !this.state.attemptFailed
 
-  //   return (
-  //     <AnimatedView style={this.fadeInAnimation.springs}>
-  //       <TouchableHighlight
-  //         underlayColor={this.props.keypadHighlightedColor}
-  //         disabled={disabled}
-  //         onShowUnderlay={() =>
-  //           this.setState({
-  //             selectedButtonText: text,
-  //           })
-  //         }
-  //         onHideUnderlay={() =>
-  //           this.setState({
-  //             selectedButtonText: '',
-  //           })
-  //         }
-  //         onPress={() => {
-  //           this.handleKeypadTouch(text)
-  //         }}
-  //         style={styles.keypadNormal}>
-  //         <View>
-  //           <Text
-  //             style={
-  //               this.state.selectedButtonText === text
-  //                 ? [
-  //                     styles.keypadNumberHighlighted,
-  //                     this.props.styleKeypadNumberCharHighlighted,
-  //                   ]
-  //                 : [
-  //                     styles.keypadNumberNormal,
-  //                     this.props.styleKeypadNumberCharNormal,
-  //                   ]
-  //             }>
-  //             {text}
-  //           </Text>
-  //           {this.props.alphabetCharsVisible && (
-  //             <Text
-  //               style={
-  //                 this.state.selectedButtonText === text
-  //                   ? [
-  //                       styles.keypadAlphabetHighlighted,
-  //                       this.props.styleKeypadAlphabetCharHighlighted,
-  //                     ]
-  //                   : [
-  //                       styles.keypadAlphabetNormal,
-  //                       this.props.styleKeypadAlphabetCharNormal,
-  //                     ]
-  //               }>
-  //               {buttonArray.get(text)}
-  //             </Text>
-  //           )}
-  //         </View>
-  //       </TouchableHighlight>
-  //     </AnimatedView>
-  //   )
-  // }
+    return (
+      <TouchableHighlight
+        underlayColor={this.props.keypadHighlightedColor}
+        disabled={disabled}
+        onShowUnderlay={() =>
+          this.setState({
+            selectedButtonText: text,
+          })
+        }
+        onHideUnderlay={() =>
+          this.setState({
+            selectedButtonText: '',
+          })
+        }
+        onPress={() => {
+          this.handleKeypadTouch(text)
+        }}
+        style={styles.keypadNormal}>
+        <View>
+          <Text
+            style={
+              this.state.selectedButtonText === text
+                ? [
+                    styles.keypadNumberHighlighted,
+                    this.props.styleKeypadNumberCharHighlighted,
+                  ]
+                : [
+                    styles.keypadNumberNormal,
+                    this.props.styleKeypadNumberCharNormal,
+                  ]
+            }>
+            {text}
+          </Text>
+          {this.props.alphabetCharsVisible && (
+            <Text
+              style={
+                this.state.selectedButtonText === text
+                  ? [
+                      styles.keypadAlphabetHighlighted,
+                      this.props.styleKeypadAlphabetCharHighlighted,
+                    ]
+                  : [
+                      styles.keypadAlphabetNormal,
+                      this.props.styleKeypadAlphabetCharNormal,
+                    ]
+              }>
+              {buttonArray.get(text)}
+            </Text>
+          )}
+        </View>
+      </TouchableHighlight>
+    )
+  }
 
   renderDeleteButton() {
     return (
@@ -376,7 +374,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
     const {
       passcode,
       // movingCordinate,
-      showError,
+      isError,
       changeScreen,
       attemptFailed,
     } = this.state
@@ -385,7 +383,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
       <View style={styles.passcodeContainer}>
         {_.range(this.passcodeLength).map((value: number) => {
           const lengthSup =
-            ((passcode.length >= value + 1 && !changeScreen) || showError) &&
+            ((passcode.length >= value + 1 && !changeScreen) || isError) &&
             !attemptFailed
           return (
             <>
@@ -396,7 +394,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
                     styles.passcodeHiddenCharContainer,
                     !_.isEmpty(this.state.passcode[value])
                       ? {
-                          borderColor: this.state.showError
+                          borderColor: this.state.isError
                             ? this.props.passcodeErrorColor ?? colors.fail
                             : this.props.passcodeHighlightColor ??
                               colors.primary,
@@ -413,7 +411,7 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
                       this.props.stylePasscodeHidden,
                       !_.isEmpty(this.state.passcode[value])
                         ? {
-                            backgroundColor: this.state.showError
+                            backgroundColor: this.state.isError
                               ? this.props.passcodeErrorColor ?? colors.fail
                               : this.props.passcodeHighlightColor ??
                                 colors.primary,
@@ -466,29 +464,28 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
   render() {
     return (
       <View style={[styles.container, this.props.styleContainer]}>
-        {/* <AnimatedView key="title" style={this.fadeInAnimation.springs}>
-          {this.renderTitle()}
-          {this.renderSubtitle()}
-        </AnimatedView> */}
+        {/* {this.renderTitle()}
+          {this.renderSubtitle()}*/}
         {/* {this.renderPasscodeIndicator()} */}
         <Typography
           title={this.props.title}
           description={this.props.subTitle}
           titleError={this.props.titleFail}
           descriptionError={this.props.subTitleFail}
-          showError={this.state.showError}
+          isError={this.state.isError}
         />
         <PasscodeIndicator
           passcodeLength={4}
           currentPasscode={this.state.passcode}
           highlightColor={colors.primary}
           normalColor={colors.description}
+          isError={this.state.isError}
         />
         <Keypad
           alphabetCharsVisible
           disabled={false}
           deleteButtonDisabled={false}
-          isError={this.state.showError}
+          isError={this.state.isError}
           onEndPasscode={(passcode: string) => {
             switch (this.props.type) {
               case PasscodeType.select:
@@ -526,7 +523,6 @@ export class Passcode extends PureComponent<PasscodeProps, PasscodeState> {
             }
           }}
         />
-
         {/* <Grid style={styles.grid}>
           <Row key="firstRow" style={styles.row}>
             {_.range(1, 4).map((index: number) => {

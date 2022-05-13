@@ -131,19 +131,9 @@ export class Locked extends PureComponent<LockedProps, LockedState> {
           {this.props.titleComponent
             ? this.props.titleComponent
             : this.renderTitle()}
-          {this.props.timerComponent ? (
-            this.props.timerComponent(minutes, seconds)
-          ) : (
-            <CountdownTimer
-              lockedTime={this.state.timeDifferent}
-              timePasscodeLockedAsyncStorageName={
-                this.props.timePasscodeLockedAsyncStorageName
-              }
-              passcodeAttemptsAsyncStorageName={
-                this.props.passcodeAttemptsAsyncStorageName
-              }
-            />
-          )}
+          {this.props.timerComponent
+            ? this.props.timerComponent(minutes, seconds)
+            : this.renderTimer(minutes, seconds)}
           {this.props.iconComponent
             ? this.props.iconComponent
             : this.renderIcon()}

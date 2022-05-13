@@ -44,7 +44,7 @@ interface PasscodeState {
         y: number;
     };
     passcode: string;
-    showError: boolean;
+    isError: boolean;
     selectedButtonText: string;
     attemptFailed: boolean;
     changeScreen: boolean;
@@ -63,6 +63,7 @@ export declare class Passcode extends PureComponent<PasscodeProps, PasscodeState
     handleKeypadTouch(text: string): Promise<void>;
     renderTitle(): JSX.Element;
     renderSubtitle: () => JSX.Element;
+    renderKeypadButton(text: string): JSX.Element;
     renderDeleteButton(): JSX.Element;
     renderPasscodeIndicator(): JSX.Element;
     render(): JSX.Element;

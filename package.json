@@ -1,27 +1,30 @@
 {
   "name": "react-native-biometry-module",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "homepage": "https://github.com/dangttp97/react-native-biometry-module#readme",
   "author": "Tran Thanh Phuong Dang",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dangttp97/react-native-biometry-module.git",
     "baseUrl": "https://github.com/dangttp97/react-native-biometry-module"
   },
   "files": [
-    "lib/index.js",
     "lib/**/*",
     "README.md"
   ],
   "scripts": {
     "build": "tsc",
     "compile": "npm run build",
-    "dev": "yarn build -watch"
+    "dev": "yarn build -watch",
+    "example:install": "(tsc; cd ./example; rm -rf ./node_modules; yarn install)",
+    "example:android": "(cd ./example; react-native run-android)",
+    "example:ios": "(cd ./example; react-native run-ios)",
+    "example:link": "(cd ./example; react-native link react-native-biometry-module)",
+    "example:android-clean": "(cd ./example/android; ./gradlew clean)"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "*",
@@ -34,18 +37,21 @@
     "@babel/plugin-transform-react-jsx": "7.17.3",
     "@babel/runtime": "^7.12.5",
     "@types/lodash": "^4.14.104",
-    "@types/react": "^18.0.7",
-    "@types/react-native": "^0.67.6",
+    "@types/react": "^17.0.1",
+    "@types/react-native": "^0.64.0",
     "babel-jest": "^28.0.1",
     "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^8.14.0",
     "jest": "^28.0.1",
     "metro-react-native-babel-preset": "0.70.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-native": "^0.68.1",
-    "react-test-renderer": "^18.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-native": "^0.64.0",
+    "react-test-renderer": "^16.9.2",
     "typescript": "^4.6.3"
+  },
+  "resolutions": {
+    "@types/react": "^17.0.1"
   },
   "peerDependencies": {
     "react": "*",

@@ -1,7 +1,7 @@
-import { PureComponent, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { CountdownTimerProps, CountdownTimerState, ICountdownTimer } from '../CountdownTimer';
-export interface FlipNumberProps {
+export interface FlipNumberProps extends CountdownTimerProps {
     number: number | string;
     unit: 'hours' | 'minutes' | 'seconds';
     size: number;
@@ -11,7 +11,9 @@ export interface FlipNumberProps {
     flipCardStyle?: StyleProp<ViewStyle>;
     numberStyle?: StyleProp<ViewStyle>;
 }
-export declare class FlipNumber extends PureComponent<FlipNumberProps> {
+export interface FlipNumberState extends CountdownTimerState {
+}
+export declare class FlipNumber extends ICountdownTimer<FlipNumberProps, FlipNumberState> {
     previousNumber: string | number;
     number: string | number;
     numberSplit: string[];

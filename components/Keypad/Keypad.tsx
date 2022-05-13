@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React from 'react'
 import {
   View,
   TouchableHighlight,
@@ -8,10 +8,12 @@ import {
   TextStyle,
   TouchableWithoutFeedback,
   Image,
+  ViewStyle,
   ViewProps,
 } from 'react-native'
 import { range } from 'lodash'
 import { Icons } from '../../assets'
+import { colors, grid } from '../../commons'
 
 export interface KeypadProps {
   alphabetCharsVisible: boolean
@@ -20,7 +22,6 @@ export interface KeypadProps {
 
   onInputingPasscode?: (passcode: string) => void
   onEndPasscode: (passcode: string) => void
-  getCurrentLength?: (length: number) => void
 
   bottomLeftButton?: JSX.Element
   keypadButton?: (
@@ -32,6 +33,8 @@ export interface KeypadProps {
   deleteButtonText?: string
   deleteButtonDisabled?: boolean
   keyHighlightColor?: string
+
+  styleContainer?: StyleProp<ViewStyle>
   styleKeypadNumberHighlight?: StyleProp<TextStyle>
   styleKeypadNumberNormal?: StyleProp<TextStyle>
   styleKeypadAlphabetHighlight?: StyleProp<TextStyle>
@@ -39,38 +42,73 @@ export interface KeypadProps {
 }
 
 export interface KeypadState {
-  passcode: string
-  showError: boolean
+  currentPasscode: string
+  isError: boolean
   selectedButtonText: string
 }
 
-const Column = (viewProps: ViewProps) => {
-  return (
-    <View
-      {...viewProps}
-      style={[viewProps.style, { flexDirection: 'column' }]}
-    />
-  )
+class Column extends View {
+  constructor(props: ViewProps) {
+    super(props)
+  }
+
+  render() {
+    return (
+      <View
+        {...this.props}
+        style={[this.props.style, { flexDirection: 'column' }]}
+      />
+    )
+  }
+}
+class Row extends View {
+  constructor(props: ViewProps) {
+    super(props)
+  }
+
+  render() {
+    return (
+      <View
+        {...this.props}
+        style={[this.props.style, { flexDirection: 'row' }]}
+      />
+    )
+  }
 }
 
-const Row = (viewProps: ViewProps) => {
-  return (
-    <View {...viewProps} style={[viewProps.style, { flexDirection: 'row' }]} />
-  )
-}
-
-export class Keypad extends PureComponent<KeypadProps, KeypadState> {
+export class Keypad extends React.PureComponent<KeypadProps, KeypadState> {
   passcodeLength: number
 
-  handleKeypadPress(number: string) {
-    const currentPasscode = this.state.passcode + number
-    this.setState({ passcode: currentPasscode })
+  static defaultProps: Partial<KeypadProps> = {
+    alphabetCharsVisible: false,
+  }
+
+  constructor(props: KeypadProps) {
+    super(props)
+
+    this.state = {
+      currentPasscode: '',
+      isError: false,
+      selectedButtonText: '',
+    }
+
+    this.handleKeypadPress.bind(this)
+    this.renderDeleteKey.bind(this)
+    this.renderSingleKey.bind(this)
+  }
+
+  componentDidUpdate(prevProps: Readonly<KeypadProps>) {
+    if (!prevProps.isError && this.props.isError) {
+      this.setState({ isError: this.props.isError })
+    }
+  }
+
+  async handleKeypadPress(number: string) {
+    const currentPasscode = this.state.currentPasscode + number
+    this.setState({ currentPasscode: currentPasscode })
 
     if (this.props.onInputingPasscode) {
       this.props.onInputingPasscode(currentPasscode)
-    }
-    if (this.props.getCurrentLength) {
-      this.props.getCurrentLength(currentPasscode.length)
     }
     if (currentPasscode.length === this.passcodeLength) {
       this.props.onEndPasscode(currentPasscode)
@@ -91,7 +129,9 @@ export class Keypad extends PureComponent<KeypadProps, KeypadState> {
       ['0', ' '],
     ])
     const disabled =
-      this.state.passcode.length === this.passcodeLength || this.props.disabled
+      this.state.currentPasscode.length === this.passcodeLength ||
+      this.props.disabled
+
     return (
       <TouchableHighlight
         underlayColor={this.props.keyHighlightColor}
@@ -108,7 +148,8 @@ export class Keypad extends PureComponent<KeypadProps, KeypadState> {
         }}
         onPress={() => {
           this.handleKeypadPress(number)
-        }}>
+        }}
+        style={styles.key}>
         <View>
           <Text
             style={
@@ -149,11 +190,11 @@ export class Keypad extends PureComponent<KeypadProps, KeypadState> {
     return (
       <TouchableWithoutFeedback
         onPress={() => {
-          if (this.state.passcode.length > 0) {
-            const newPass = this.state.passcode.slice(0, -1)
-            this.setState({ passcode: newPass })
-            if (this.props.getCurrentLength) {
-              this.props.getCurrentLength(newPass.length)
+          if (this.state.currentPasscode.length > 0) {
+            const newPass = this.state.currentPasscode.slice(0, -1)
+            this.setState({ currentPasscode: newPass })
+            if (this.props.onInputingPasscode) {
+              this.props.onInputingPasscode(newPass)
             }
           }
         }}>
@@ -177,7 +218,7 @@ export class Keypad extends PureComponent<KeypadProps, KeypadState> {
 
   render() {
     return (
-      <View>
+      <View style={[styles.container, this.props.styleContainer]}>
         <Column style={styles.col}>
           <Row style={styles.row}>
             {range(1, 4).map((value) => {
@@ -231,13 +272,13 @@ export class Keypad extends PureComponent<KeypadProps, KeypadState> {
             <View style={styles.key}>
               {this.props.deleteButton
                 ? this.props.deleteButton(() => {
-                    if (this.state.passcode.length > 0) {
-                      const newPass = this.state.passcode.slice(0, -1)
+                    if (this.state.currentPasscode.length > 0) {
+                      const newPass = this.state.currentPasscode.slice(0, -1)
                       this.setState({
-                        passcode: newPass,
+                        currentPasscode: newPass,
                       })
-                      if (this.props.getCurrentLength) {
-                        this.props.getCurrentLength(newPass.length)
+                      if (this.props.onInputingPasscode) {
+                        this.props.onInputingPasscode(newPass)
                       }
                     }
                   })
@@ -254,21 +295,53 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.white,
   },
   col: {
-    width: '100%',
-    flex: 1,
-  },
-  row: {
-    flex: 1,
-  },
-  key: {
-    flex: 1,
+    marginLeft: grid.unit / 2,
+    marginRight: grid.unit / 2,
     alignItems: 'center',
     justifyContent: 'center',
+    width: grid.unit * 6,
+    height: grid.unit * 6,
+    flex: 0,
   },
-  keypadNumberHighlighted: {},
-  keypadNumberNormal: {},
-  keypadAlphabetHighlighted: {},
-  keypadAlphabetNormal: {},
+  row: {
+    flex: 0,
+    flexShrink: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: grid.unit * 7,
+  },
+  key: {
+    backgroundColor: colors.keypadBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: grid.unit * 5,
+    height: grid.unit * 5,
+    borderRadius: grid.unit * 3,
+  },
+  keypadNumberHighlighted: {
+    color: colors.white,
+    fontSize: 27,
+    textAlign: 'center',
+  },
+  keypadNumberNormal: {
+    color: colors.primary,
+    fontSize: 27,
+    textAlign: 'center',
+  },
+  keypadAlphabetHighlighted: {
+    color: colors.white,
+    fontSize: 13,
+    textAlign: 'center',
+  },
+  keypadAlphabetNormal: {
+    color: colors.primary,
+    fontSize: 13,
+    textAlign: 'center',
+  },
 })

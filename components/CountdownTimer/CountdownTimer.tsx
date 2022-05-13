@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import React, { FC, PureComponent, WeakValidationMap } from 'react'
+import React from 'react'
 import {
   StyleProp,
   StyleSheet,
@@ -12,7 +12,7 @@ import { colors, delay } from '../../commons'
 import { FadeTimer } from './Fade'
 import { FlipTimer } from './Flip'
 
-export interface CountdownTimerProps {
+interface CountdownTimerProps {
   timePasscodeLockedAsyncStorageName: string
   passcodeAttemptsAsyncStorageName: string
   lockedTime: number
@@ -24,14 +24,14 @@ export interface CountdownTimerProps {
   styleTimerText?: StyleProp<TextStyle>
 }
 
-export interface CountdownTimerState {
+interface CountdownTimerState {
   timeDifferent: number
 }
 
 export abstract class ICountdownTimer<
   Props extends CountdownTimerProps,
   State extends CountdownTimerState,
-> extends PureComponent<Props, State> {
+> extends React.PureComponent<Props, State> {
   lockedTime: number
   unmounted: boolean
 
@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export { CountdownTimer }
+export { CountdownTimer, CountdownTimerProps, CountdownTimerState }

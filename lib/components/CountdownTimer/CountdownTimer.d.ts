@@ -1,8 +1,8 @@
-import { PureComponent } from 'react';
+import React from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { FadeTimer } from './Fade';
 import { FlipTimer } from './Flip';
-export interface CountdownTimerProps {
+interface CountdownTimerProps {
     timePasscodeLockedAsyncStorageName: string;
     passcodeAttemptsAsyncStorageName: string;
     lockedTime: number;
@@ -11,10 +11,10 @@ export interface CountdownTimerProps {
     styleContainer?: StyleProp<ViewStyle>;
     styleTimerText?: StyleProp<TextStyle>;
 }
-export interface CountdownTimerState {
+interface CountdownTimerState {
     timeDifferent: number;
 }
-export declare abstract class ICountdownTimer<Props extends CountdownTimerProps, State extends CountdownTimerState> extends PureComponent<Props, State> {
+export declare abstract class ICountdownTimer<Props extends CountdownTimerProps, State extends CountdownTimerState> extends React.PureComponent<Props, State> {
     lockedTime: number;
     unmounted: boolean;
     componentDidMount(): void;
@@ -28,4 +28,4 @@ declare class CountdownTimer extends ICountdownTimer<CountdownTimerProps, Countd
     constructor(props: CountdownTimerProps);
     render(): JSX.Element;
 }
-export { CountdownTimer };
+export { CountdownTimer, CountdownTimerProps, CountdownTimerState };

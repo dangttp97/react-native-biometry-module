@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react'
 
+import { StyleProp, TextStyle, ViewStyle } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import {
   hasPasscode,
   PasscodeResultStatus,
@@ -8,6 +10,7 @@ import {
   setNewPasscode,
   getPasscode,
   colors,
+  vibrateDevice,
 } from './commons'
 import {
   InputPasscode,
@@ -15,8 +18,6 @@ import {
   SelectPasscode,
   ChangePasscode,
 } from './screens'
-import { StyleProp, TextStyle, ViewStyle } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import {
   CountdownTimer,
   Keypad,
@@ -31,7 +32,7 @@ enum PasscodeResult {
   locked = 'locked',
 }
 
-export interface BiometryProps {
+interface BiometryProps {
   type: 'select' | 'change' | 'input'
   numberOfAttempts?: number
   lockedTime?: number
@@ -46,7 +47,7 @@ export interface BiometryProps {
   keypadCharHighlightedColor?: string
   keypadCharNormalColor?: string
 
-  passcodeStatus?: PasscodeResult
+  passcodeStatus?: 'initial' | 'success' | 'locked'
 
   deleteButtonIcon?: JSX.Element
   biometryButtonIcon?: JSX.Element
@@ -100,7 +101,7 @@ export interface BiometryProps {
   styleKeypadNumberCharNormal?: StyleProp<TextStyle>
 }
 
-export interface BiometryState {
+interface BiometryState {
   internalPasscodeStatus: PasscodeResult
   passcodeLocked: boolean
 }
@@ -360,28 +361,34 @@ const getPasscodeDefault = (keychainName?: string) => {
   return getPasscode(keychainName || passcodeKeychainNameDefault)
 }
 
+const vibrate = () => {
+  vibrateDevice()
+}
+
 // MARK: Export section
 const Helpers = {
-  hasUserSetPasscode,
   changePasscode,
-  getPasscodeByBiometric,
   changePreviousPasscode,
-  setPasscode,
-  getPasscodeDefault,
   defaultKeychainName: passcodeKeychainNameDefault,
   defaultLockedTimeAsyncStorageName: timePasscodeLockedAsyncStorageNameDefault,
   defaultPasscodeAttemptsAsyncStorageName:
     passcodeAttemptsAsyncStorageNameDefault,
+  getPasscodeByBiometric,
+  getPasscodeDefault,
+  hasUserSetPasscode,
+  setPasscode,
+  vibrate,
+}
+
+const Components = {
+  CountdownTimer: typeof CountdownTimer,
+  Helpers: typeof Helpers,
+  Keypad: typeof Keypad,
+  Icons: typeof Icons,
+  Typography: typeof Typography,
+  Indicator: typeof PasscodeIndicator,
 }
 
 const Biometry = BuildInLayout
-export {
-  Helpers,
-  colors as Colors,
-  Icons,
-  CountdownTimer,
-  Keypad,
-  PasscodeIndicator as Indicator,
-  Typography,
-}
-export default Biometry
+// export default Biometry
+export { Biometry as default, colors as Colors, Components }

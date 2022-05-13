@@ -16,3 +16,4 @@ export declare const changePasscode: (serviceName: string, oldPasscode: string, 
 export declare const hasPasscode: (serviceName: string) => Promise<boolean>;
 export declare const deletePasscode: (serviceName: string) => Promise<void>;
 export declare const resetInternalStates: (asyncStorageKeys: string[]) => Promise<void>;
+export declare const vibrateDevice: () => void;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import {
   StyleProp,
   StyleSheet,
@@ -10,11 +10,14 @@ import {
 import { colors } from '../../commons'
 
 export interface TypographyProps {
-  showError: boolean
+  isError: boolean
   title: string
   description?: string
   titleError?: string
   descriptionError?: string
+
+  errorColor?: string
+  normalColor?: string
 
   styleContainer?: StyleProp<ViewStyle>
   styleTitle?: StyleProp<TextStyle>
@@ -23,11 +26,33 @@ export interface TypographyProps {
   styleDescriptionError?: StyleProp<TextStyle>
 }
 
-export class Typography extends Component<TypographyProps> {
+interface TypographyState {
+  isError: boolean
+}
+
+export class Typography extends React.PureComponent<
+  TypographyProps,
+  TypographyState
+> {
+  constructor(props: TypographyProps) {
+    super(props)
+    this.state = {
+      isError: false,
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<TypographyProps>): void {
+    if (!prevProps.isError && this.props.isError) {
+      this.setState({
+        isError: this.props.isError,
+      })
+    }
+  }
+
   render() {
     return (
       <>
-        {!this.props.showError && (
+        {!this.state.isError && (
           <View style={[styles.container, this.props.styleContainer]}>
             <Text style={[styles.title, this.props.styleTitle]}>
               {this.props.title}
@@ -39,7 +64,7 @@ export class Typography extends Component<TypographyProps> {
             )}
           </View>
         )}
-        {this.props.showError && (
+        {this.state.isError && (
           <View style={[styles.container, this.props.styleContainer]}>
             <Text style={[styles.titleError, this.props.styleTitleError]}>
               {this.props.titleError}

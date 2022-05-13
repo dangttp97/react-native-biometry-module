@@ -8,7 +8,7 @@ import {
 import { NumberCard } from './NumberCard'
 import { Separator } from './Separator'
 
-export interface FlipNumberProps {
+export interface FlipNumberProps extends CountdownTimerProps {
   number: number | string
   unit: 'hours' | 'minutes' | 'seconds'
   size: number
@@ -19,7 +19,12 @@ export interface FlipNumberProps {
   numberStyle?: StyleProp<ViewStyle>
 }
 
-export class FlipNumber extends PureComponent<FlipNumberProps> {
+export interface FlipNumberState extends CountdownTimerState {}
+
+export class FlipNumber extends ICountdownTimer<
+  FlipNumberProps,
+  FlipNumberState
+> {
   previousNumber: string | number
   number: string | number
   numberSplit: string[]

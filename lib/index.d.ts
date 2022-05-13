@@ -1,15 +1,12 @@
-/// <reference types="react-native-keychain" />
 import { PureComponent } from 'react';
-import { colors } from './commons';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
-import { CountdownTimer, Keypad, PasscodeIndicator, Typography } from './components';
-import { Icons } from './assets';
+import { colors } from './commons';
 declare enum PasscodeResult {
     initial = "initial",
     success = "success",
     locked = "locked"
 }
-export interface BiometryProps {
+interface BiometryProps {
     type: 'select' | 'change' | 'input';
     numberOfAttempts?: number;
     lockedTime?: number;
@@ -22,7 +19,7 @@ export interface BiometryProps {
     passcodeAttemptsAsyncStorageName?: string;
     keypadCharHighlightedColor?: string;
     keypadCharNormalColor?: string;
-    passcodeStatus?: PasscodeResult;
+    passcodeStatus?: 'initial' | 'success' | 'locked';
     deleteButtonIcon?: JSX.Element;
     biometryButtonIcon?: JSX.Element;
     lockedButton?: JSX.Element;
@@ -64,7 +61,7 @@ export interface BiometryProps {
     styleKeypadAlphabetCharNormal?: StyleProp<TextStyle>;
     styleKeypadNumberCharNormal?: StyleProp<TextStyle>;
 }
-export interface BiometryState {
+interface BiometryState {
     internalPasscodeStatus: PasscodeResult;
     passcodeLocked: boolean;
 }
@@ -82,15 +79,13 @@ declare class BuildInLayout extends PureComponent<BiometryProps, BiometryState> 
     renderLockedScreen(): JSX.Element;
     render(): JSX.Element;
 }
-declare const Helpers: {
-    hasUserSetPasscode: (keychainName?: string) => Promise<boolean>;
-    changePasscode: (serviceName: string, oldPasscode: string, newPasscode: string) => Promise<void>;
-    getPasscodeByBiometric: (keychainName?: string) => Promise<string>;
-    changePreviousPasscode: (oldPasscode: string, newPasscode: string, keychainName?: string) => Promise<void>;
-    setPasscode: (newPasscode: string, keychainName?: string) => Promise<false | import("react-native-keychain").Result>;
-    getPasscodeDefault: (keychainName?: string) => Promise<string>;
-    defaultKeychainName: string;
+declare const Components: {
+    CountdownTimer: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
+    Helpers: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
+    Keypad: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
+    Icons: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
+    Typography: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
+    Indicator: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
 };
 declare const Biometry: typeof BuildInLayout;
-export { Helpers, colors as Colors, Icons, CountdownTimer, Keypad, PasscodeIndicator as Indicator, Typography, };
-export default Biometry;
+export { Biometry as default, colors as Colors, Components };

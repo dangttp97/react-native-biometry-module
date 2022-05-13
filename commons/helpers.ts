@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Platform } from 'react-native'
+import { Platform, Vibration } from 'react-native'
 import * as Keychain from 'react-native-keychain'
+import * as ReactNativeHapticFeedback from 'react-native-haptic-feedback'
 
 export const delay = (ms: number) =>
   new Promise<void>((res) => setTimeout(res, ms))
@@ -18,12 +19,24 @@ export const WithBiometryAuthConfig = Platform.select({
   ios: { accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY },
 })
 
-export const setNewPasscode = async (serviceName: string, newPasscode: string) => {
-  return await Keychain.setInternetCredentials(serviceName, serviceName, newPasscode)
+export const setNewPasscode = async (
+  serviceName: string,
+  newPasscode: string,
+) => {
+  return await Keychain.setInternetCredentials(
+    serviceName,
+    serviceName,
+    newPasscode,
+  )
 }
 
-export const getPasscodeWithBiometryAuthentication = async (serviceName: string) => {
-  return await Keychain.getInternetCredentials(serviceName, WithBiometryAuthConfig).then(res => {
+export const getPasscodeWithBiometryAuthentication = async (
+  serviceName: string,
+) => {
+  return await Keychain.getInternetCredentials(
+    serviceName,
+    WithBiometryAuthConfig,
+  ).then((res) => {
     if (res) {
       return res.password
     }
@@ -31,15 +44,25 @@ export const getPasscodeWithBiometryAuthentication = async (serviceName: string)
 }
 
 export const getPasscode = async (serviceName: string) => {
-  return await Keychain.getInternetCredentials(serviceName, NoBiometryAuthConfig).then(res => {
+  return await Keychain.getInternetCredentials(
+    serviceName,
+    NoBiometryAuthConfig,
+  ).then((res) => {
     if (res) {
       return res.password
     }
   })
 }
 
-export const changePasscode = async (serviceName: string, oldPasscode: string, newPasscode: string) => {
-  return await Keychain.getInternetCredentials(serviceName, NoBiometryAuthConfig).then(res => {
+export const changePasscode = async (
+  serviceName: string,
+  oldPasscode: string,
+  newPasscode: string,
+) => {
+  return await Keychain.getInternetCredentials(
+    serviceName,
+    NoBiometryAuthConfig,
+  ).then((res) => {
     if (res && res.password === oldPasscode) {
       deletePasscode(serviceName)
       setNewPasscode(serviceName, newPasscode)
@@ -59,4 +82,16 @@ export const deletePasscode = async (serviceName: string) => {
 
 export const resetInternalStates = async (asyncStorageKeys: string[]) => {
   return await AsyncStorage.multiRemove(asyncStorageKeys)
+}
+
+export const vibrateDevice = () => {
+  const vibratePattern = [0, 30, 100, 50, 50, 30]
+
+  if (Platform.OS === 'android') {
+    Vibration.vibrate(vibratePattern)
+  } else if (Platform.OS === 'ios') {
+    ReactNativeHapticFeedback.trigger('notificationError', {
+      enableVibrateFallback: true,
+    })
+  }
 }
