@@ -2,28 +2,23 @@ import React, { PureComponent } from 'react'
 
 import { StyleProp, TextStyle, ViewStyle } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { colors } from './commons/colors'
 import {
   hasPasscode,
-  PasscodeResultStatus,
   getPasscodeWithBiometryAuthentication,
   changePasscode,
   setNewPasscode,
   getPasscode,
-  colors,
   vibrateDevice,
-} from './commons'
-import {
-  InputPasscode,
-  Locked,
-  SelectPasscode,
-  ChangePasscode,
-} from './screens'
-import {
-  CountdownTimer,
-  Keypad,
-  PasscodeIndicator,
-  Typography,
-} from './components'
+} from './commons/helpers'
+import { InputPasscode } from './screens/InputPasscode/InputPasscode'
+import { Locked } from './screens/Locked/Locked'
+import { SelectPasscode } from './screens/SelectPasscode/SelectPasscode'
+import { ChangePasscode } from './screens/ChangePasscode/ChangePasscode'
+import { CountdownTimer } from './components/CountdownTimer/CountdownTimer'
+import { Keypad } from './components/Keypad/Keypad'
+import { PasscodeIndicator } from './components/PasscodeIndicator/PasscodeIndicator'
+import { Typography } from './components/Typography/Typography'
 import { Icons } from './assets'
 
 enum PasscodeResult {
@@ -168,7 +163,7 @@ class BuildInLayout extends PureComponent<BiometryProps, BiometryState> {
         }
         changeStatus={(status) => {
           switch (status) {
-            case PasscodeResultStatus.initial:
+            case 'initial':
               this.setState({
                 internalPasscodeStatus: PasscodeResult.initial,
                 passcodeLocked: false,
@@ -381,14 +376,13 @@ const Helpers = {
 }
 
 const Components = {
-  CountdownTimer: typeof CountdownTimer,
-  Helpers: typeof Helpers,
-  Keypad: typeof Keypad,
-  Icons: typeof Icons,
-  Typography: typeof Typography,
-  Indicator: typeof PasscodeIndicator,
+  CountdownTimer: CountdownTimer,
+  Keypad: Keypad,
+  Icons: Icons,
+  Typography: Typography,
+  Indicator: PasscodeIndicator,
 }
 
 const Biometry = BuildInLayout
 // export default Biometry
-export { Biometry as default, colors as Colors, Components }
+export { Biometry as default, colors as Colors, Components, Helpers }

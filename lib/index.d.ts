@@ -1,6 +1,11 @@
+/// <reference types="react-native-keychain" />
 import { PureComponent } from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
-import { colors } from './commons';
+import { colors } from './commons/colors';
+import { CountdownTimer } from './components/CountdownTimer/CountdownTimer';
+import { Keypad } from './components/Keypad/Keypad';
+import { PasscodeIndicator } from './components/PasscodeIndicator/PasscodeIndicator';
+import { Typography } from './components/Typography/Typography';
 declare enum PasscodeResult {
     initial = "initial",
     success = "success",
@@ -79,13 +84,29 @@ declare class BuildInLayout extends PureComponent<BiometryProps, BiometryState> 
     renderLockedScreen(): JSX.Element;
     render(): JSX.Element;
 }
+declare const Helpers: {
+    changePasscode: (serviceName: string, oldPasscode: string, newPasscode: string) => Promise<void>;
+    changePreviousPasscode: (oldPasscode: string, newPasscode: string, keychainName?: string) => Promise<void>;
+    defaultKeychainName: string;
+    defaultLockedTimeAsyncStorageName: string;
+    defaultPasscodeAttemptsAsyncStorageName: string;
+    getPasscodeByBiometric: (keychainName?: string) => Promise<string>;
+    getPasscodeDefault: (keychainName?: string) => Promise<string>;
+    hasUserSetPasscode: (keychainName?: string) => Promise<boolean>;
+    setPasscode: (newPasscode: string, keychainName?: string) => Promise<false | import("react-native-keychain").Result>;
+    vibrate: () => void;
+};
 declare const Components: {
-    CountdownTimer: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
-    Helpers: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
-    Keypad: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
-    Icons: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
-    Typography: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
-    Indicator: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
+    CountdownTimer: typeof CountdownTimer;
+    Keypad: typeof Keypad;
+    Icons: {
+        ic_locked: any;
+        ic_fingerprint: any;
+        ic_face: any;
+        ic_delete: any;
+    };
+    Typography: typeof Typography;
+    Indicator: typeof PasscodeIndicator;
 };
 declare const Biometry: typeof BuildInLayout;
-export { Biometry as default, colors as Colors, Components };
+export { Biometry as default, colors as Colors, Components, Helpers };

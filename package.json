@@ -12,25 +12,28 @@
     "url": "git+https://github.com/dangttp97/react-native-biometry-module.git",
     "baseUrl": "https://github.com/dangttp97/react-native-biometry-module"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/react-native-biometry-module/-/react-native-biometry-module-1.1.0.tgz"
+  },
   "files": [
     "lib/**/*",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
     "compile": "npm run build",
-    "dev": "yarn build -watch",
-    "example:install": "(tsc; cd ./example; rm -rf ./node_modules; yarn install)",
-    "example:android": "(cd ./example; react-native run-android)",
-    "example:ios": "(cd ./example; react-native run-ios)",
-    "example:link": "(cd ./example; react-native link react-native-biometry-module)",
-    "example:android-clean": "(cd ./example/android; ./gradlew clean)"
+    "example:install": "(tsc; rm -rf example/node_modules; yarn --cwd example)",
+    "example:pods": "(cd example/ios; pod install)",
+    "example:android-clean": "(cd ./example/android; ./gradlew clean)",
+    "example:prerun": "(rm -rf ./node_modules; yarn install; yarn example:install; yarn example:android-clean; yarn example:pods)",
+    "example:android": "(yarn example:prerun; cd ./example; react-native run-android)",
+    "example:ios": "(yarn example:prerun; cd ./example; react-native run-ios)",
+    "example:link": "(cd ./example; react-native link react-native-biometry-module)"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "*",
-    "lodash": "*",
+    "@react-native-async-storage/async-storage": "1.17.4",
+    "lodash": "4.17.21",
     "react-native-haptic-feedback": "1.13.1",
-    "react-native-keychain": "*"
+    "react-native-keychain": "8.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
